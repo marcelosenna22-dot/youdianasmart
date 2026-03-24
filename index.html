@@ -178,22 +178,23 @@
         <div class="results-list" id="resultsList"></div>
     </div>
 
-    <div class="player-container">
-        <div class="player-placeholder" id="placeholder">
-            <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
-        </div>
-        
-       <video id="videoPlayer" controls autoplay muted playsinline>
-            <source src="" type="video/mp4">
-        </video>
-
-        <div class="overlay-controls">
-            <button class="btn-overlay" onclick="playPrevious()">⏮</button>
-            <button class="btn-overlay" onclick="skipTime(-10)">-10s</button>
-            <button class="btn-overlay" onclick="skipTime(10)">+10s</button>
-            <button class="btn-overlay" onclick="playNext()">⏭</button>
-        </div>
+<div class="player-container">
+    <div class="player-placeholder" id="placeholder">
+        <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
     </div>
+    
+    <video id="videoPlayer" controls autoplay playsinline style="display:none;">
+        <source src="" type="video/mp4">
+        Seu navegador não suporta vídeos.
+    </video>
+
+    <div class="overlay-controls">
+        <button class="btn-overlay" onclick="playPrevious()">⏮</button>
+        <button class="btn-overlay" onclick="skipTime(-10)">-10s</button>
+        <button class="btn-overlay" onclick="skipTime(10)">+10s</button>
+        <button class="btn-overlay" onclick="playNext()">⏭</button>
+    </div>
+</div>
 
     <div class="video-info">
         <h3 id="playingNow">Pronto para começar!</h3>
