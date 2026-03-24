@@ -8,9 +8,8 @@
     <style>
         :root { 
             --primary: #ff4757; 
-            --bg: #0f0c29; /* Tom de azul marinho muito escuro */
             --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            --card: rgba(255, 255, 255, 0.05); /* Efeito de vidro */
+            --card: rgba(255, 255, 255, 0.08);
             --text: #ffffff; 
         }
 
@@ -28,16 +27,16 @@
         }
 
         header h1 {
-            font-size: 2rem;
-            letter-spacing: 1px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
+            font-size: 2.2rem;
             color: var(--primary);
+            text-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+            margin-bottom: 25px;
         }
 
+        /* Busca Estilo YouTube */
         .search-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             position: relative;
             margin-bottom: 30px;
         }
@@ -56,25 +55,31 @@
             transition: 0.3s;
         }
 
-        input:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(255, 71, 87, 0.2); }
 
         .results-list { 
             position: absolute;
-            top: 60px;
+            top: 65px;
             left: 0;
             width: 100%; 
             background: #1e1e2e;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             z-index: 100;
-            max-height: 250px;
+            max-height: 300px;
             overflow-y: auto;
             display: none;
         }
 
-        .video-item { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .video-item:hover { background: var(--primary); }
+        .video-item { 
+            padding: 15px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
+        }
+        .video-item:hover { background: var(--primary); color: white; }
 
+        /* Player Premium */
         .player-container {
             position: relative;
             width: 100%;
@@ -82,41 +87,13 @@
             background: #000;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
             border: 1px solid rgba(255,255,255,0.1);
         }
 
         video { width: 100%; display: block; }
 
-        /* Barra de Ações (Curtir/Compartilhar) */
-        .video-info {
-            width: 100%;
-            max-width: 850px;
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 10px;
-        }
-
-        .actions { display: flex; gap: 15px; }
-
-        .btn-action {
-            background: var(--card);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-        }
-
-        .btn-action:hover { background: rgba(255,255,255,0.2); }
-        .btn-action.active { color: var(--primary); border-color: var(--primary); }
-
+        /* Controles flutuantes */
         .overlay-controls {
             position: absolute;
             top: 0;
@@ -137,18 +114,52 @@
 
         .btn-overlay {
             pointer-events: auto;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 15px;
             border-radius: 50%;
             cursor: pointer;
-            width: 60px;
-            height: 60px;
-            font-size: 1.3rem;
+            width: 65px;
+            height: 65px;
+            font-size: 1.4rem;
+            transition: 0.2s;
         }
 
-        #playingNow { font-size: 1.2rem; margin: 0; font-weight: 600; }
+        .btn-overlay:hover { transform: scale(1.1); background: var(--primary); }
+
+        /* Informações e Ações */
+        .video-info {
+            width: 100%;
+            max-width: 850px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0 10px;
+        }
+
+        #playingNow { font-size: 1.4rem; margin: 0; font-weight: 600; }
+        #countDisplay { font-size: 0.85rem; color: #aaa; margin-top: 5px; }
+
+        .actions { display: flex; gap: 12px; }
+
+        .btn-action {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-action:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+        .btn-action.active { color: var(--primary); border-color: var(--primary); }
     </style>
 </head>
 <body>
@@ -156,7 +167,7 @@
     <header><h1>Tube Vídeo Smart</h1></header>
 
     <div class="search-container">
-        <input type="text" id="searchInput" placeholder="O que vamos assistir hoje?" oninput="searchVideos()" autocomplete="off">
+        <input type="text" id="searchInput" placeholder="Buscar vídeos no seu app..." oninput="searchVideos()" autocomplete="off">
         <div class="results-list" id="resultsList"></div>
     </div>
 
@@ -174,21 +185,23 @@
     </div>
 
     <div class="video-info">
-        <h3 id="playingNow">Selecione um vídeo</h3>
+        <div>
+            <h3 id="playingNow">Selecione um vídeo</h3>
+            <p id="countDisplay">0 curtidas • 0 compartilhamentos</p>
+        </div>
         <div class="actions">
-            <button class="btn-action" onclick="toggleLike(this)">
-                <span id="likeIcon">🤍</span> <small>Curtir</small>
+            <button class="btn-action" id="likeBtn" onclick="registrarCurtida()">
+                <span id="likeIcon">🤍</span> <small id="likeCount">0</small>
             </button>
-            <button class="btn-action" onclick="compartilhar()">
-                <span>🔗</span> <small>Compartilhar</small>
+            <button class="btn-action" onclick="registrarCompartilhamento()">
+                <span>🔗</span> <small id="shareCount">0</small>
             </button>
         </div>
     </div>
 
     <script type="module">
-        // Importações e Configuração do Firebase (MANTENHA AS SUAS CHAVES AQUI)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, update, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBc-qchU3a3Z2Jr1ijPolIT7PNHZz86G_I",
@@ -208,30 +221,89 @@
         const resultsList = document.getElementById('resultsList');
         const searchInput = document.getElementById('searchInput');
         const playingNow = document.getElementById('playingNow');
+        const countDisplay = document.getElementById('countDisplay');
 
         let biblioteca = [];
         let currentIndex = -1;
 
+        // Escutando o banco de dados
         onValue(videosRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 biblioteca = Object.keys(data).map(key => ({ id_firebase: key, ...data[key] }));
+                
+                // Atualiza os contadores na tela se houver um vídeo passando
+                if (currentIndex !== -1) {
+                    const videoAtualizado = biblioteca.find(v => v.id_firebase === biblioteca[currentIndex].id_firebase);
+                    if (videoAtualizado) {
+                        atualizarContadoresTela(videoAtualizado);
+                    }
+                }
             }
         });
 
         window.carregarVideo = function(index) {
             if (index < 0 || index >= biblioteca.length) return;
+            
             currentIndex = index;
-            videoPlayer.src = biblioteca[index].arquivo;
+            const video = biblioteca[index];
+            
+            videoPlayer.src = video.arquivo;
             videoPlayer.load();
             videoPlayer.play();
-            playingNow.innerText = biblioteca[index].titulo;
+            
+            playingNow.innerText = video.titulo;
+            atualizarContadoresTela(video);
+            
+            // Reset visual
+            document.getElementById('likeIcon').innerText = "🤍";
+            document.getElementById('likeBtn').classList.remove('active');
             resultsList.style.display = 'none';
             searchInput.value = '';
-            // Resetar botão de like ao trocar vídeo
-            document.querySelector('.btn-action').classList.remove('active');
-            document.getElementById('likeIcon').innerText = "🤍";
         };
+
+        function atualizarContadoresTela(video) {
+            const likes = video.curtidas || 0;
+            const shares = video.compartilhamentos || 0;
+            document.getElementById('likeCount').innerText = likes;
+            document.getElementById('shareCount').innerText = shares;
+            countDisplay.innerText = `${likes} curtidas • ${shares} compartilhamentos`;
+        }
+
+        // --- FUNÇÕES DE INTERAÇÃO ---
+
+        window.registrarCurtida = function() {
+            if (currentIndex === -1) return;
+            const videoId = biblioteca[currentIndex].id_firebase;
+            const videoRef = ref(db, `videos/${videoId}`);
+
+            update(videoRef, { curtidas: increment(1) });
+            document.getElementById('likeIcon').innerText = "❤️";
+            document.getElementById('likeBtn').classList.add('active');
+        };
+
+        window.registrarCompartilhamento = function() {
+            if (currentIndex === -1) return;
+            const videoId = biblioteca[currentIndex].id_firebase;
+            const videoRef = ref(db, `videos/${videoId}`);
+            const tituloVideo = biblioteca[currentIndex].titulo;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Tube Vídeo Smart',
+                    text: `Assista a "${tituloVideo}" no meu novo app!`,
+                    url: window.location.href
+                }).then(() => {
+                    update(videoRef, { compartilhamentos: increment(1) });
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copiado! Compartilhe no seu navegador.");
+                update(videoRef, { compartilhamentos: increment(1) });
+            }
+        };
+
+        // --- PLAYER E BUSCA ---
 
         window.skipTime = function(s) { videoPlayer.currentTime += s; };
         window.playNext = function() { carregarVideo((currentIndex + 1) % biblioteca.length); };
@@ -248,27 +320,14 @@
         function renderLista(lista) {
             resultsList.innerHTML = '';
             lista.forEach((video) => {
-                const realIndex = biblioteca.findIndex(b => b.titulo === video.titulo);
+                const realIndex = biblioteca.findIndex(b => b.id_firebase === video.id_firebase);
                 const d = document.createElement('div');
-                d.className = 'video-item'; d.innerText = video.titulo;
+                d.className = 'video-item'; 
+                d.innerText = video.titulo;
                 d.onclick = () => carregarVideo(realIndex);
                 resultsList.appendChild(d);
             });
         }
-
-        // Funções Novas: Curtir e Compartilhar
-        window.toggleLike = function(btn) {
-            btn.classList.toggle('active');
-            const icon = document.getElementById('likeIcon');
-            icon.innerText = btn.classList.contains('active') ? "❤️" : "🤍";
-        };
-
-        window.compartilhar = function() {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                alert("Link do app copiado! Agora é só enviar para os amigos.");
-            });
-        };
 
         document.addEventListener('click', (e) => {
             if (!document.querySelector('.search-container').contains(e.target)) {
