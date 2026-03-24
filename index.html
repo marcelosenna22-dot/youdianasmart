@@ -118,8 +118,12 @@
         }
 
         video { width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 2; display: none; }
-        video.active { display: block; }
-
+        video.active { 
+    display: block; 
+    z-index: 2; 
+    position: relative;
+    pointer-events: auto; /* Garante que você consiga clicar nos controles */
+}
         .overlay-controls {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
