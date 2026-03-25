@@ -10,86 +10,87 @@
         .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; position: relative; }
         h2 { text-align: center; color: #333; margin-top: 10px; }
         
-        /* --- BOTÃO SAIR NO TOPO DIREITO --- */
         .btn-logout { 
-            position: absolute; 
-            top: 20px; 
-            right: 20px; 
-            background: #f1f2f6; 
-            color: #ff4757; 
-            border: none; 
-            padding: 5px 12px; 
-            border-radius: 20px; 
-            font-size: 0.75rem; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: 0.3s;
+            position: absolute; top: 20px; right: 20px; background: #f1f2f6; color: #ff4757; 
+            border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.3s;
         }
         .btn-logout:hover { background: #ff4757; color: white; }
 
         label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #666; font-weight: 600; }
         input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
-        textarea { height: 80px; resize: vertical; }
+        textarea { height: 60px; resize: vertical; }
         
         button { padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; }
-        
-        .btn-login { background-color: #3498db; color: white; }
         .btn-save { background-color: #2ecc71; color: white; margin-bottom: 10px; }
         .btn-update { background-color: #f39c12; color: white; margin-bottom: 10px; display: none; }
         .btn-cancel { background-color: #bdc3c7; color: white; margin-bottom: 10px; display: none; }
         
-        .video-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #fff; margin-bottom: 8px; border-radius: 8px; border: 1px solid #f0f0f0; }
+        /* --- LISTA COM SCROLL (ROLAGEM) --- */
+        #listaVideos { 
+            max-height: 300px; /* Define a altura máxima da lista */
+            overflow-y: auto;  /* Ativa a rolagem vertical */
+            padding-right: 5px;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Estilização da barra de rolagem para ficar bonita */
+        #listaVideos::-webkit-scrollbar { width: 6px; }
+        #listaVideos::-webkit-scrollbar-track { background: #f1f1f1; }
+        #listaVideos::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+        .video-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px; border-bottom: 1px solid #eee; background: #fff; 
+            margin-bottom: 5px; border-radius: 5px;
+        }
         .info { flex-grow: 1; overflow: hidden; margin-right: 10px; }
-        .info b { display: block; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .info span { font-size: 0.7rem; color: #888; display: block; }
+        .info b { display: block; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info span { font-size: 0.65rem; color: #999; }
         
         .actions-list { display: flex; gap: 5px; }
-        .btn-edit { background-color: #f1f2f6; color: #f39c12; font-size: 0.7rem; padding: 6px 10px; width: auto; }
-        .btn-delete { background-color: #f1f2f6; color: #ff4757; font-size: 0.7rem; padding: 6px 10px; width: auto; }
-        
+        .btn-edit, .btn-delete { background-color: #f8f9fa; border: 1px solid #ddd; font-size: 0.7rem; padding: 4px 8px; width: auto; }
+        .btn-edit { color: #f39c12; }
+        .btn-delete { color: #ff4757; }
+
         #painelAdmin { display: none; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
-        .status-user { text-align: center; font-size: 0.7rem; color: #999; margin-bottom: 15px; }
+        .status-user { text-align: center; font-size: 0.7rem; color: #999; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <div class="container" id="telaLogin">
         <h2>🔒 Área Restrita</h2>
-        <input type="email" id="emailAdmin" placeholder="E-mail do administrador">
+        <input type="email" id="emailAdmin" placeholder="E-mail">
         <input type="password" id="senhaAdmin" placeholder="Senha">
-        <button class="btn-login" onclick="fazerLogin()">Aceder ao Painel</button>
+        <button style="background:#3498db; color:white;" onclick="fazerLogin()">Entrar</button>
     </div>
 
     <div class="container" id="painelAdmin">
         <button class="btn-logout" onclick="fazerLogout()">Sair</button>
-        
         <h2>🚀 YouVideo Admin</h2>
         <div id="userEmail" class="status-user"></div>
         
         <input type="hidden" id="editId">
+        <label>Título:</label>
+        <input type="text" id="titulo">
+        <label>Descrição:</label>
+        <textarea id="descricao"></textarea>
+        <label>Caminho:</label>
+        <input type="text" id="caminho">
         
-        <label>Título do Vídeo:</label>
-        <input type="text" id="titulo" placeholder="Ex: Aula de JavaScript">
-        
-        <label>Descrição do Vídeo:</label>
-        <textarea id="descricao" placeholder="Escreva os detalhes que aparecerão abaixo do vídeo..."></textarea>
-        
-        <label>Caminho do Arquivo (GitHub):</label>
-        <input type="text" id="caminho" placeholder="Ex: videos/aula1.mp4">
-        
-        <button id="btnSalvar" class="btn-save" onclick="salvarVideo()">💾 Cadastrar Vídeo</button>
-        <button id="btnAtualizar" class="btn-update" onclick="atualizarVideo()">🔄 Guardar Alterações</button>
-        <button id="btnCancelar" class="btn-cancel" onclick="cancelarEdicao()">Cancelar Edição</button>
+        <button id="btnSalvar" class="btn-save" onclick="salvarVideo()">💾 Cadastrar</button>
+        <button id="btnAtualizar" class="btn-update" onclick="atualizarVideo()">🔄 Atualizar</button>
+        <button id="btnCancelar" class="btn-cancel" onclick="cancelarEdicao()">Cancelar</button>
 
-        <hr>
-        <div id="listaVideos">Carregando vídeos...</div>
+        <h4 style="margin: 20px 0 10px 0; color: #333; font-size: 0.9rem;">Vídeos na Nuvem:</h4>
+        <div id="listaVideos">Carregando...</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, push, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBc-qchU3a3Z2Jr1ijPolIT7PNHZz86G_I",
@@ -109,39 +110,32 @@
         window.fazerLogin = () => {
             const email = document.getElementById('emailAdmin').value;
             const senha = document.getElementById('senhaAdmin').value;
-            signInWithEmailAndPassword(auth, email, senha).catch(() => alert("Acesso negado!"));
+            signInWithEmailAndPassword(auth, email, senha).catch(() => alert("Erro no login!"));
         };
 
-        window.fazerLogout = () => {
-            if(confirm("Deseja realmente sair?")) signOut(auth).then(() => location.reload());
-        };
+        window.fazerLogout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('telaLogin').style.display = 'none';
                 document.getElementById('painelAdmin').style.display = 'block';
-                document.getElementById('userEmail').innerText = "Conectado: " + user.email;
+                document.getElementById('userEmail').innerText = user.email;
                 carregarLista();
-            } else {
-                document.getElementById('telaLogin').style.display = 'block';
-                document.getElementById('painelAdmin').style.display = 'none';
             }
         });
 
         window.salvarVideo = () => {
-            const titulo = document.getElementById('titulo').value;
-            const descricao = document.getElementById('descricao').value;
-            const arquivo = document.getElementById('caminho').value;
-            if (titulo && arquivo) {
-                push(videosRef, { titulo, descricao, arquivo, curtidas: 0, compartilhamentos: 0 }).then(() => limparCampos());
-            }
+            const t = document.getElementById('titulo').value;
+            const d = document.getElementById('descricao').value;
+            const a = document.getElementById('caminho').value;
+            if (t && a) push(videosRef, { titulo: t, descricao: d, arquivo: a, curtidas: 0, compartilhamentos: 0 }).then(() => limpar());
         };
 
-        window.prepararEdicao = (id, titulo, desc, arquivo) => {
+        window.prepararEdicao = (id, t, d, a) => {
             document.getElementById('editId').value = id;
-            document.getElementById('titulo').value = titulo;
-            document.getElementById('descricao').value = desc === "undefined" ? "" : desc;
-            document.getElementById('caminho').value = arquivo;
+            document.getElementById('titulo').value = t;
+            document.getElementById('descricao').value = d === "undefined" ? "" : d;
+            document.getElementById('caminho').value = a;
             document.getElementById('btnSalvar').style.display = 'none';
             document.getElementById('btnAtualizar').style.display = 'block';
             document.getElementById('btnCancelar').style.display = 'block';
@@ -150,26 +144,23 @@
 
         window.atualizarVideo = () => {
             const id = document.getElementById('editId').value;
-            const titulo = document.getElementById('titulo').value;
-            const descricao = document.getElementById('descricao').value;
-            const arquivo = document.getElementById('caminho').value;
-            if (id && titulo && arquivo) {
-                update(ref(db, `videos/${id}`), { titulo, descricao, arquivo }).then(() => cancelarEdicao());
-            }
+            update(ref(db, `videos/${id}`), {
+                titulo: document.getElementById('titulo').value,
+                descricao: document.getElementById('descricao').value,
+                arquivo: document.getElementById('caminho').value
+            }).then(() => cancelarEdicao());
         };
 
         window.cancelarEdicao = () => {
-            limparCampos();
+            limpar();
             document.getElementById('btnSalvar').style.display = 'block';
             document.getElementById('btnAtualizar').style.display = 'none';
             document.getElementById('btnCancelar').style.display = 'none';
         };
 
-        window.excluirVideo = (id) => {
-            if (confirm("Apagar permanentemente?")) remove(ref(db, `videos/${id}`));
-        };
+        window.excluirVideo = (id) => { if (confirm("Apagar?")) remove(ref(db, `videos/${id}`)); };
 
-        function limparCampos() {
+        function limpar() {
             document.getElementById('titulo').value = "";
             document.getElementById('descricao').value = "";
             document.getElementById('caminho').value = "";
@@ -177,21 +168,20 @@
         }
 
         function carregarLista() {
-            onValue(videosRef, (snapshot) => {
+            onValue(videosRef, (snap) => {
                 const listaDiv = document.getElementById('listaVideos');
-                listaDiv.innerHTML = "<h4>Vídeos Online:</h4>";
-                const data = snapshot.val();
+                listaDiv.innerHTML = "";
+                const data = snap.val();
                 if (data) {
                     Object.keys(data).forEach(key => {
                         const v = data[key];
                         const item = document.createElement('div');
                         item.className = 'video-item';
-                        const descSegura = (v.descricao || "").replace(/'/g, "\\'");
-                        const tituloSeguro = (v.titulo || "").replace(/'/g, "\\'");
-                        item.innerHTML = `
-                            <div class="info"><b>${v.titulo}</b><span>${v.arquivo}</span></div>
+                        const dS = (v.descricao || "").replace(/'/g, "\\'");
+                        const tS = (v.titulo || "").replace(/'/g, "\\'");
+                        item.innerHTML = `<div class="info"><b>${v.titulo}</b><span>${v.arquivo}</span></div>
                             <div class="actions-list">
-                                <button class="btn-edit" onclick="prepararEdicao('${key}', '${tituloSeguro}', '${descSegura}', '${v.arquivo}')">Editar</button>
+                                <button class="btn-edit" onclick="prepararEdicao('${key}', '${tS}', '${dS}', '${v.arquivo}')">Edit</button>
                                 <button class="btn-delete" onclick="excluirVideo('${key}')">X</button>
                             </div>`;
                         listaDiv.appendChild(item);
