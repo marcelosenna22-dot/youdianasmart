@@ -1,0 +1,17 @@
+{
+  "short_name": "Admin YouVideo",
+  "name": "Painel Administrativo - YouVideo Smart",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/6024/6024190.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "admin.html",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#3498db"
+}
