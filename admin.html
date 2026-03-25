@@ -3,108 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Admin - YouVideo Smart</title>
+    <title>Login Admin - YouVideo Smart</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin: 0;
-        }
-
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-        }
-
-        h2 { color: #333; text-align: center; margin-bottom: 25px; }
-
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn-save { background-color: #2ecc71; color: white; width: 100%; margin-bottom: 10px; }
-        .btn-save:hover { background-color: #27ae60; }
-
-        .btn-clear-all { background-color: #ff4757; color: white; width: 100%; margin-top: 30px; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { text-align: center; color: #333; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-login { background-color: #3498db; color: white; }
+        .btn-save { background-color: #2ecc71; color: white; margin-bottom: 10px; }
+        .btn-delete { background-color: #ff4757; color: white; width: auto; padding: 5px 10px; font-size: 0.8rem; }
+        .btn-logout { background-color: #8e44ad; color: white; margin-top: 20px; font-size: 0.8rem; }
         
-        .video-item {
-            background: #fff;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-
-        .video-info-text { flex-grow: 1; margin-right: 10px; }
-        .video-info-text b { display: block; color: #333; }
-        .video-info-text span { font-size: 0.75rem; color: #888; word-break: break-all; }
-
-        .btn-delete-single {
-            background-color: #f1f2f6;
-            color: #ff4757;
-            padding: 8px 12px;
-            font-size: 0.8rem;
-        }
-        .btn-delete-single:hover { background-color: #ff4757; color: white; }
-
-        hr { border: 0; border-top: 1px solid #eee; margin: 30px 0; }
+        /* Esconde o painel até logar */
+        #painelAdmin { display: none; }
+        .video-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>🚀 Gerenciar Vídeos</h2>
+    <div class="container" id="telaLogin">
+        <h2>🔒 Área Restrita</h2>
+        <input type="email" id="emailAdmin" placeholder="E-mail do administrador">
+        <input type="password" id="senhaAdmin" placeholder="Sua senha">
+        <button class="btn-login" onclick="fazerLogin()">Entrar no Painel</button>
+    </div>
+
+    <div class="container" id="painelAdmin">
+        <h2>🚀 YouVideo Admin</h2>
+        <p id="userLogado" style="font-size: 0.8rem; color: #666; text-align: center;"></p>
         
         <label>Título do Vídeo:</label>
-        <input type="text" id="titulo" placeholder="Ex: Aula 01 - Introdução">
-
+        <input type="text" id="titulo" placeholder="Ex: Clipe Novo">
         <label>Caminho do Arquivo:</label>
-        <input type="text" id="caminho" placeholder="Ex: videos/aula1.mp4">
-
+        <input type="text" id="caminho" placeholder="Ex: videos/clipe.mp4">
         <button class="btn-save" onclick="salvarVideo()">💾 Salvar Vídeo</button>
 
         <hr>
+        <div id="listaVideos"></div>
 
-        <div id="listaVideos">
-            <p style="text-align: center; color: #999;">Carregando sua lista...</p>
-        </div>
-
-        <button class="btn-clear-all" onclick="limparBanco()">🗑️ Apagar TUDO (Reset)</button>
+        <button class="btn-logout" onclick="fazerLogout()">Sair com segurança</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
@@ -118,72 +62,67 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getDatabase(app);
         const videosRef = ref(db, 'videos');
 
-        // SALVAR NOVO VÍDEO
+        // --- SISTEMA DE LOGIN ---
+        window.fazerLogin = function() {
+            const email = document.getElementById('emailAdmin').value;
+            const senha = document.getElementById('senhaAdmin').value;
+            signInWithEmailAndPassword(auth, email, senha)
+                .catch(error => alert("Erro ao entrar: Verifique e-mail e senha."));
+        };
+
+        window.fazerLogout = function() {
+            signOut(auth).then(() => location.reload());
+        };
+
+        // Monitorar se o usuário está logado
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('telaLogin').style.display = 'none';
+                document.getElementById('painelAdmin').style.display = 'block';
+                document.getElementById('userLogado').innerText = "Logado como: " + user.email;
+                carregarLista();
+            } else {
+                document.getElementById('telaLogin').style.display = 'block';
+                document.getElementById('painelAdmin').style.display = 'none';
+            }
+        });
+
+        // --- FUNÇÕES DO BANCO DE DADOS ---
         window.salvarVideo = function() {
             const titulo = document.getElementById('titulo').value;
             const arquivo = document.getElementById('caminho').value;
-
-            if (!titulo || !arquivo) {
-                alert("Preencha todos os campos!");
-                return;
-            }
-
-            const novoRef = push(videosRef);
-            set(novoRef, {
-                titulo: titulo,
-                arquivo: arquivo,
-                curtidas: 0,
-                compartilhamentos: 0
-            }).then(() => {
+            if (titulo && arquivo) {
+                push(videosRef, { titulo, arquivo, curtidas: 0, compartilhamentos: 0 });
                 document.getElementById('titulo').value = "";
                 document.getElementById('caminho').value = "";
-            });
+            }
         };
 
-        // EXCLUIR VÍDEO INDIVIDUAL
         window.excluirVideo = function(id) {
-            if (confirm("Deseja excluir este vídeo da lista?")) {
-                const itemRef = ref(db, `videos/${id}`);
-                remove(itemRef).then(() => {
-                    console.log("Removido:", id);
-                });
-            }
+            if (confirm("Excluir este vídeo?")) remove(ref(db, `videos/${id}`));
         };
 
-        // LIMPAR TUDO
-        window.limparBanco = function() {
-            if (confirm("⚠️ Isso apagará TODOS os vídeos. Tem certeza?")) {
-                remove(videosRef);
-            }
-        };
-
-        // LISTAR VÍDEOS COM BOTÃO DE EXCLUIR
-        onValue(videosRef, (snapshot) => {
-            const listaDiv = document.getElementById('listaVideos');
-            listaDiv.innerHTML = "<h4>Vídeos Cadastrados:</h4>";
-            
-            const data = snapshot.val();
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    const video = data[key];
-                    const item = document.createElement('div');
-                    item.className = 'video-item';
-                    item.innerHTML = `
-                        <div class="video-info-text">
-                            <b>${video.titulo}</b>
-                            <span>${video.arquivo}</span>
-                        </div>
-                        <button class="btn-delete-single" onclick="excluirVideo('${key}')">Excluir</button>
-                    `;
-                    listaDiv.appendChild(item);
-                });
-            } else {
-                listaDiv.innerHTML = "<p style='text-align:center;color:#999;'>Nenhum vídeo na lista.</p>";
-            }
-        });
+        function carregarLista() {
+            onValue(videosRef, (snapshot) => {
+                const listaDiv = document.getElementById('listaVideos');
+                listaDiv.innerHTML = "<h4>Vídeos Online:</h4>";
+                const data = snapshot.val();
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        const v = data[key];
+                        listaDiv.innerHTML += `
+                            <div class="video-item">
+                                <span>${v.titulo}</span>
+                                <button class="btn-delete" onclick="excluirVideo('${key}')">Remover</button>
+                            </div>`;
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>
