@@ -39,35 +39,25 @@
         .auth-container { background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; }
         .auth-container input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: none; background: rgba(255,255,255,0.2); color: white; box-sizing: border-box; outline: none; }
         .btn-main { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; background: var(--primary); color: white; }
-        .btn-switch { background: transparent; color: #ccc; margin-top: 15px; border: none; text-decoration: underline; cursor: pointer; font-size: 0.85rem; }
+        .btn-switch { background: transparent; color: #ccc; margin-top: 15px; border: none; text-decoration: underline; cursor: pointer; font-size: 0.85rem; margin-right: 10px; }
 
-        /* --- CONTEÚDO --- */
-        #mainContent { display: none; width: 100%; max-width: 850px; flex-direction: column; position: relative; } /* Adicionado position relative */
-
-        /* --- LOGO NO CANTO SUPERIOR ESQUERDO --- */
-        .app-logo {
-            font-size: 1.3rem; font-weight: 600; color: white;
-            text-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
-            margin-bottom: 20px;
-            align-self: flex-start; /* Alinha o logo à esquerda */
-        }
-
+        /* --- CONTEÚDO PRINCIPAL --- */
+        #mainContent { display: none; width: 100%; max-width: 850px; flex-direction: column; position: relative; }
+        .app-logo { font-size: 1.3rem; font-weight: 600; color: white; text-shadow: 0 0 10px rgba(255, 71, 87, 0.4); margin-bottom: 20px; align-self: flex-start; }
         .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.8rem; opacity: 0.8; }
         
+        /* Barra de Pesquisa */
         .search-container { position: relative; width: 100%; margin-bottom: 20px; display: flex; align-items: center; }
         #searchInput { width: 100%; padding: 12px 50px 12px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card); color: white; box-sizing: border-box; outline: none; }
         .search-icon { position: absolute; right: 15px; cursor: pointer; font-size: 1.2rem; background: none; border: none; color: white; }
-        
         .results-list { position: absolute; top: 55px; width: 100%; background: #1e1e2e; border-radius: 15px; z-index: 100; display: none; max-height: 250px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .video-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
 
-        /* --- PLAYER COM CONTROLES --- */
+        /* Player */
         .player-container { width: 100%; background: #000; border-radius: 15px; overflow: hidden; position: relative; aspect-ratio: 16 / 9; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .main-video { width: 100%; height: 100%; }
-        
         .overlay-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: 0.3s; z-index: 10; pointer-events: none; }
         .player-container:hover .overlay-controls { opacity: 1; }
-        
         .btn-overlay { background: rgba(0,0,0,0.6); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; pointer-events: auto; font-size: 1.2rem; transition: 0.2s; min-width: 55px; }
         .btn-overlay:hover { background: var(--primary); transform: scale(1.1); }
         .btn-small { font-size: 0.9rem; min-width: 45px; }
@@ -75,7 +65,7 @@
         .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; display: none; z-index: 5; }
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        /* --- DESTAQUES --- */
+        /* Destaques */
         .highlights-section { margin-top: 25px; }
         .highlights-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
         .highlight-card { flex: 0 0 160px; background: var(--card); border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; }
@@ -89,16 +79,20 @@
 
     <div id="splashScreen">
         <div class="splash-logo">YouDiana Smart</div>
-        <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">Carregando sua experiência...</p>
+        <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">Carregando...</p>
     </div>
 
     <div id="authScreen">
         <div class="auth-container">
             <h2 id="authTitle">YouDiana Login</h2>
-            <input type="email" id="emailUser" placeholder="E-mail">
-            <input type="password" id="passUser" placeholder="Senha">
-            <button class="btn-main" onclick="executarAuth()">Acessar</button>
-            <button class="btn-switch" onclick="alternarModo()">Cadastre-se</button>
+            <input type="email" id="emailUser" placeholder="E-mail Real">
+            <input type="password" id="passUser" placeholder="Senha (mín. 6 dígitos)">
+            <button class="btn-main" id="btnAuthAction" onclick="executarAuth()">Acessar</button>
+            
+            <div style="margin-top: 15px;">
+                <button class="btn-switch" onclick="alternarModo()" id="btnSwitchLabel">Cadastre-se</button>
+                <button class="btn-switch" onclick="recuperarSenha()" style="color: #ff4757; text-decoration: none;">Esqueci a senha</button>
+            </div>
         </div>
     </div>
 
@@ -111,7 +105,7 @@
         </div>
 
         <div class="search-container" onclick="event.stopPropagation()">
-            <input type="text" id="searchInput" placeholder="O que vamos assistir?" oninput="searchVideos()" onkeyup="if(event.key==='Enter') searchVideos()">
+            <input type="text" id="searchInput" placeholder="Pesquisar vídeos..." oninput="searchVideos()" onkeyup="if(event.key==='Enter') searchVideos()">
             <button class="search-icon" onclick="searchVideos()">🔍</button>
             <div class="results-list" id="resultsList"></div>
         </div>
@@ -129,7 +123,7 @@
         </div>
 
         <div class="video-details" style="margin-top:15px; background:var(--card); padding:15px; border-radius:10px;">
-            <h3 id="playingNow" style="margin:0;">Iniciando...</h3>
+            <h3 id="playingNow" style="margin:0;">Selecionando vídeo...</h3>
             <p id="videoDesc" style="font-size:0.85rem; color:#bbb; margin-top:5px;"></p>
             <div style="display:flex; gap:15px; margin-top:10px;">
                 <button onclick="registrarCurtida()" style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center; gap:5px;">❤️ <span id="likeCount">0</span></button>
@@ -145,9 +139,18 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut,
+            sendEmailVerification,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, onValue, update, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        // CONFIGURAÇÃO DO FIREBASE (SUBSTITUA PELAS SUAS CHAVES SE NECESSÁRIO)
         const firebaseConfig = {
             apiKey: "AIzaSyBc-qchU3a3Z2Jr1ijPolIT7PNHZz86G_I",
             authDomain: "youvideo-22f8a.firebaseapp.com",
@@ -170,32 +173,66 @@
         const videoPlayer = document.getElementById('videoPlayer');
         const loader = document.getElementById('videoLoader');
 
-        // LÓGICA DA TELA DE SPLASH
+        // --- LÓGICA SPLASH SCREEN ---
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
                 splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.visibility = 'hidden';
-                }, 800);
-            }, 3000); // Fica na tela por 3 segundos
+                setTimeout(() => splash.style.visibility = 'hidden', 800);
+            }, 3000);
         });
 
-        videoPlayer.onwaiting = () => loader.style.display = 'block';
-        videoPlayer.onplaying = () => loader.style.display = 'none';
-        videoPlayer.onended = () => playNext();
-
-        // --- AUTH ---
-        window.alternarModo = () => { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "YouDiana Login" : "Criar Conta"; };
-        window.executarAuth = () => {
-            const e = document.getElementById('emailUser').value, p = document.getElementById('passUser').value;
-            if(isLoginMode) signInWithEmailAndPassword(auth, e, p).catch(() => alert("Erro no login!"));
-            else createUserWithEmailAndPassword(auth, e, p).catch(() => alert("Erro ao cadastrar!"));
+        // --- LÓGICA DE AUTENTICAÇÃO ---
+        window.alternarModo = () => {
+            isLoginMode = !isLoginMode;
+            document.getElementById('authTitle').innerText = isLoginMode ? "YouDiana Login" : "Criar Conta";
+            document.getElementById('btnAuthAction').innerText = isLoginMode ? "Acessar" : "Cadastrar Agora";
+            document.getElementById('btnSwitchLabel').innerText = isLoginMode ? "Cadastre-se" : "Já tenho conta";
         };
+
+        window.executarAuth = () => {
+            const email = document.getElementById('emailUser').value;
+            const pass = document.getElementById('passUser').value;
+
+            if(!email || !pass) return alert("Preencha todos os campos!");
+
+            if (isLoginMode) {
+                signInWithEmailAndPassword(auth, email, pass)
+                    .then((userCredential) => {
+                        if (!userCredential.user.emailVerified) {
+                            alert("Por favor, ative sua conta no link enviado para o seu e-mail!");
+                            signOut(auth);
+                        }
+                    })
+                    .catch(() => alert("E-mail ou senha incorretos."));
+            } else {
+                createUserWithEmailAndPassword(auth, email, pass)
+                    .then((userCredential) => {
+                        sendEmailVerification(userCredential.user).then(() => {
+                            alert("Conta criada com sucesso! Enviamos um código de ativação para o seu e-mail real.");
+                            signOut(auth);
+                            alternarModo();
+                        });
+                    })
+                    .catch((error) => {
+                        if(error.code === 'auth/weak-password') alert("A senha deve ter pelo menos 6 caracteres.");
+                        else alert("Erro ao cadastrar. Verifique se o e-mail é válido.");
+                    });
+            }
+        };
+
+        window.recuperarSenha = () => {
+            const email = document.getElementById('emailUser').value;
+            if(!email) return alert("Digite seu e-mail no campo acima para recuperar a senha.");
+            sendPasswordResetEmail(auth, email)
+                .then(() => alert("Link de recuperação enviado para: " + email))
+                .catch(() => alert("E-mail não encontrado."));
+        };
+
         window.fazerLogout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, (user) => {
-            if (user) {
+            if (user && user.emailVerified) {
                 document.getElementById('authScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'flex';
                 document.getElementById('txtUserEmail').innerText = user.email;
@@ -206,6 +243,7 @@
             }
         });
 
+        // --- LÓGICA DO BANCO E PLAYER ---
         function conectarBanco() {
             onValue(ref(db, 'videos'), (snap) => {
                 const data = snap.val();
@@ -220,19 +258,6 @@
             });
         }
 
-        window.searchVideos = () => {
-            const t = document.getElementById('searchInput').value.toLowerCase();
-            const list = document.getElementById('resultsList');
-            if(!t) { list.style.display = 'none'; return; }
-            const fits = biblioteca.filter(v => v.titulo.toLowerCase().includes(t));
-            list.innerHTML = fits.map(v => `<div class="video-item" onclick="carregarVideo(${biblioteca.indexOf(v)})">${v.titulo}</div>`).join('');
-            list.style.display = fits.length ? 'block' : 'none';
-        };
-
-        window.fecharSugestoes = (e) => {
-            document.getElementById('resultsList').style.display = 'none';
-        };
-
         window.carregarVideo = (index) => {
             if (index < 0 || index >= biblioteca.length) return;
             currentIndex = index;
@@ -246,9 +271,18 @@
             document.getElementById('searchInput').value = '';
         };
 
+        window.skipTime = (segundos) => videoPlayer.currentTime += segundos;
         window.playNext = () => carregarVideo((currentIndex + 1) % biblioteca.length);
         window.playPrevious = () => carregarVideo((currentIndex - 1 + biblioteca.length) % biblioteca.length);
-        window.skipTime = (segundos) => videoPlayer.currentTime += segundos;
+
+        window.searchVideos = () => {
+            const t = document.getElementById('searchInput').value.toLowerCase();
+            const list = document.getElementById('resultsList');
+            if(!t) { list.style.display = 'none'; return; }
+            const fits = biblioteca.filter(v => v.titulo.toLowerCase().includes(t));
+            list.innerHTML = fits.map(v => `<div class="video-item" onclick="carregarVideo(${biblioteca.indexOf(v)})">${v.titulo}</div>`).join('');
+            list.style.display = fits.length ? 'block' : 'none';
+        };
 
         function renderHighlights() {
             const list = document.getElementById('highlightsList');
@@ -266,6 +300,11 @@
 
         window.registrarCurtida = () => update(ref(db, `videos/${biblioteca[currentIndex].id_firebase}`), { curtidas: increment(1) });
         window.compartilhar = () => navigator.share ? navigator.share({url: window.location.href}) : alert("Link copiado!");
+        window.fecharSugestoes = () => document.getElementById('resultsList').style.display = 'none';
+
+        videoPlayer.onwaiting = () => loader.style.display = 'block';
+        videoPlayer.onplaying = () => loader.style.display = 'none';
+        videoPlayer.onended = () => playNext();
     </script>
 </body>
 </html>
