@@ -42,7 +42,16 @@
         .btn-switch { background: transparent; color: #ccc; margin-top: 15px; border: none; text-decoration: underline; cursor: pointer; font-size: 0.85rem; }
 
         /* --- CONTEÚDO --- */
-        #mainContent { display: none; width: 100%; max-width: 850px; flex-direction: column; }
+        #mainContent { display: none; width: 100%; max-width: 850px; flex-direction: column; position: relative; } /* Adicionado position relative */
+
+        /* --- LOGO NO CANTO SUPERIOR ESQUERDO --- */
+        .app-logo {
+            font-size: 1.3rem; font-weight: 600; color: white;
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+            margin-bottom: 20px;
+            align-self: flex-start; /* Alinha o logo à esquerda */
+        }
+
         .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.8rem; opacity: 0.8; }
         
         .search-container { position: relative; width: 100%; margin-bottom: 20px; display: flex; align-items: center; }
@@ -94,6 +103,8 @@
     </div>
 
     <div id="mainContent">
+        <div class="app-logo">YouDiana Smart</div>
+
         <div class="user-header">
             <span id="txtUserEmail">...</span>
             <button onclick="fazerLogout()" style="background:none; border:none; color:var(--primary); cursor:pointer; text-decoration:underline;">Sair</button>
@@ -166,7 +177,6 @@
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.visibility = 'hidden';
-                    // Após o splash, o Firebase vai decidir se mostra Login ou App através do onAuthStateChanged
                 }, 800);
             }, 3000); // Fica na tela por 3 segundos
         });
