@@ -7,57 +7,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        h2 { text-align: center; color: #333; margin-top: 0; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; position: relative; }
+        h2 { text-align: center; color: #333; margin-top: 10px; }
         
-        .btn-login { background-color: #3498db; color: white; width: 100%; }
-        .btn-save { background-color: #2ecc71; color: white; width: 100%; margin-bottom: 10px; }
-        .btn-update { background-color: #f39c12; color: white; width: 100%; margin-bottom: 10px; display: none; }
+        /* --- BOTÃO SAIR NO TOPO DIREITO --- */
+        .btn-logout { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            background: #f1f2f6; 
+            color: #ff4757; 
+            border: none; 
+            padding: 5px 12px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        .btn-logout:hover { background: #ff4757; color: white; }
+
+        label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #666; font-weight: 600; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        textarea { height: 80px; resize: vertical; }
         
-        .video-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #fff; margin-bottom: 5px; border-radius: 8px; }
-        .video-item:hover { background: #f9f9f9; }
-        .info { flex-grow: 1; }
-        .info b { display: block; font-size: 0.9rem; }
-        .info span { font-size: 0.7rem; color: #888; }
+        button { padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; }
+        
+        .btn-login { background-color: #3498db; color: white; }
+        .btn-save { background-color: #2ecc71; color: white; margin-bottom: 10px; }
+        .btn-update { background-color: #f39c12; color: white; margin-bottom: 10px; display: none; }
+        .btn-cancel { background-color: #bdc3c7; color: white; margin-bottom: 10px; display: none; }
+        
+        .video-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #fff; margin-bottom: 8px; border-radius: 8px; border: 1px solid #f0f0f0; }
+        .info { flex-grow: 1; overflow: hidden; margin-right: 10px; }
+        .info b { display: block; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info span { font-size: 0.7rem; color: #888; display: block; }
         
         .actions-list { display: flex; gap: 5px; }
-        .btn-edit { background-color: #f1f2f6; color: #f39c12; font-size: 0.75rem; padding: 5px 10px; }
-        .btn-delete { background-color: #f1f2f6; color: #ff4757; font-size: 0.75rem; padding: 5px 10px; }
+        .btn-edit { background-color: #f1f2f6; color: #f39c12; font-size: 0.7rem; padding: 6px 10px; width: auto; }
+        .btn-delete { background-color: #f1f2f6; color: #ff4757; font-size: 0.7rem; padding: 6px 10px; width: auto; }
         
-        .btn-logout { background-color: transparent; color: #888; margin-top: 20px; width: 100%; text-decoration: underline; font-size: 0.8rem; }
         #painelAdmin { display: none; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
+        .status-user { text-align: center; font-size: 0.7rem; color: #999; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
     <div class="container" id="telaLogin">
-        <h2>🔒 Acesso Restrito</h2>
-        <input type="email" id="emailAdmin" placeholder="Seu e-mail">
-        <input type="password" id="senhaAdmin" placeholder="Sua senha">
-        <button class="btn-login" onclick="fazerLogin()">Entrar no Sistema</button>
+        <h2>🔒 Área Restrita</h2>
+        <input type="email" id="emailAdmin" placeholder="E-mail do administrador">
+        <input type="password" id="senhaAdmin" placeholder="Senha">
+        <button class="btn-login" onclick="fazerLogin()">Aceder ao Painel</button>
     </div>
 
     <div class="container" id="painelAdmin">
-        <h2>🚀 Gerenciar Vídeos</h2>
-        <p id="userEmail" style="text-align:center; font-size:0.7rem; color:#999;"></p>
+        <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+        
+        <h2>🚀 YouVideo Admin</h2>
+        <div id="userEmail" class="status-user"></div>
         
         <input type="hidden" id="editId">
-        <label>Título:</label>
-        <input type="text" id="titulo" placeholder="Nome do vídeo">
-        <label>Caminho:</label>
-        <input type="text" id="caminho" placeholder="videos/nome.mp4">
         
-        <button id="btnSalvar" class="btn-save" onclick="salvarVideo()">💾 Salvar Novo</button>
-        <button id="btnAtualizar" class="btn-update" onclick="atualizarVideo()">🔄 Atualizar Alterações</button>
-        <button id="btnCancelar" class="btn-logout" style="display:none; margin-top:0;" onclick="cancelarEdicao()">Cancelar Edição</button>
+        <label>Título do Vídeo:</label>
+        <input type="text" id="titulo" placeholder="Ex: Aula de JavaScript">
+        
+        <label>Descrição do Vídeo:</label>
+        <textarea id="descricao" placeholder="Escreva os detalhes que aparecerão abaixo do vídeo..."></textarea>
+        
+        <label>Caminho do Arquivo (GitHub):</label>
+        <input type="text" id="caminho" placeholder="Ex: videos/aula1.mp4">
+        
+        <button id="btnSalvar" class="btn-save" onclick="salvarVideo()">💾 Cadastrar Vídeo</button>
+        <button id="btnAtualizar" class="btn-update" onclick="atualizarVideo()">🔄 Guardar Alterações</button>
+        <button id="btnCancelar" class="btn-cancel" onclick="cancelarEdicao()">Cancelar Edição</button>
 
         <hr>
-        <div id="listaVideos">Carregando...</div>
-
-        <button class="btn-logout" onclick="fazerLogout()">Sair do Painel</button>
+        <div id="listaVideos">Carregando vídeos...</div>
     </div>
 
     <script type="module">
@@ -80,57 +106,55 @@
         const db = getDatabase(app);
         const videosRef = ref(db, 'videos');
 
-        // LOGIN E LOGOUT
         window.fazerLogin = () => {
             const email = document.getElementById('emailAdmin').value;
             const senha = document.getElementById('senhaAdmin').value;
-            signInWithEmailAndPassword(auth, email, senha).catch(() => alert("Acesso Negado!"));
+            signInWithEmailAndPassword(auth, email, senha).catch(() => alert("Acesso negado!"));
         };
 
-        window.fazerLogout = () => signOut(auth).then(() => location.reload());
+        window.fazerLogout = () => {
+            if(confirm("Deseja realmente sair?")) signOut(auth).then(() => location.reload());
+        };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('telaLogin').style.display = 'none';
                 document.getElementById('painelAdmin').style.display = 'block';
-                document.getElementById('userEmail').innerText = user.email;
+                document.getElementById('userEmail').innerText = "Conectado: " + user.email;
                 carregarLista();
+            } else {
+                document.getElementById('telaLogin').style.display = 'block';
+                document.getElementById('painelAdmin').style.display = 'none';
             }
         });
 
-        // SALVAR NOVO
         window.salvarVideo = () => {
             const titulo = document.getElementById('titulo').value;
+            const descricao = document.getElementById('descricao').value;
             const arquivo = document.getElementById('caminho').value;
             if (titulo && arquivo) {
-                push(videosRef, { titulo, arquivo, curtidas: 0, compartilhamentos: 0 });
-                limparCampos();
+                push(videosRef, { titulo, descricao, arquivo, curtidas: 0, compartilhamentos: 0 }).then(() => limparCampos());
             }
         };
 
-        // PREPARAR EDIÇÃO
-        window.prepararEdicao = (id, titulo, arquivo) => {
+        window.prepararEdicao = (id, titulo, desc, arquivo) => {
             document.getElementById('editId').value = id;
             document.getElementById('titulo').value = titulo;
+            document.getElementById('descricao').value = desc === "undefined" ? "" : desc;
             document.getElementById('caminho').value = arquivo;
-            
             document.getElementById('btnSalvar').style.display = 'none';
             document.getElementById('btnAtualizar').style.display = 'block';
             document.getElementById('btnCancelar').style.display = 'block';
+            window.scrollTo(0, 0);
         };
 
-        // ATUALIZAR
         window.atualizarVideo = () => {
             const id = document.getElementById('editId').value;
             const titulo = document.getElementById('titulo').value;
+            const descricao = document.getElementById('descricao').value;
             const arquivo = document.getElementById('caminho').value;
-            
             if (id && titulo && arquivo) {
-                update(ref(db, `videos/${id}`), { titulo, arquivo })
-                .then(() => {
-                    alert("Atualizado!");
-                    cancelarEdicao();
-                });
+                update(ref(db, `videos/${id}`), { titulo, descricao, arquivo }).then(() => cancelarEdicao());
             }
         };
 
@@ -142,11 +166,12 @@
         };
 
         window.excluirVideo = (id) => {
-            if (confirm("Apagar vídeo?")) remove(ref(db, `videos/${id}`));
+            if (confirm("Apagar permanentemente?")) remove(ref(db, `videos/${id}`));
         };
 
         function limparCampos() {
             document.getElementById('titulo').value = "";
+            document.getElementById('descricao').value = "";
             document.getElementById('caminho').value = "";
             document.getElementById('editId').value = "";
         }
@@ -154,23 +179,23 @@
         function carregarLista() {
             onValue(videosRef, (snapshot) => {
                 const listaDiv = document.getElementById('listaVideos');
-                listaDiv.innerHTML = "<h4>Vídeos na Nuvem:</h4>";
+                listaDiv.innerHTML = "<h4>Vídeos Online:</h4>";
                 const data = snapshot.val();
                 if (data) {
                     Object.keys(data).forEach(key => {
                         const v = data[key];
                         const item = document.createElement('div');
                         item.className = 'video-item';
+                        const descSegura = (v.descricao || "").replace(/'/g, "\\'");
+                        const tituloSeguro = (v.titulo || "").replace(/'/g, "\\'");
                         item.innerHTML = `
                             <div class="info"><b>${v.titulo}</b><span>${v.arquivo}</span></div>
                             <div class="actions-list">
-                                <button class="btn-edit" onclick="prepararEdicao('${key}', '${v.titulo}', '${v.arquivo}')">Editar</button>
+                                <button class="btn-edit" onclick="prepararEdicao('${key}', '${tituloSeguro}', '${descSegura}', '${v.arquivo}')">Editar</button>
                                 <button class="btn-delete" onclick="excluirVideo('${key}')">X</button>
                             </div>`;
                         listaDiv.appendChild(item);
                     });
-                } else {
-                    listaDiv.innerHTML = "<p>Nenhum vídeo cadastrado.</p>";
                 }
             });
         }
