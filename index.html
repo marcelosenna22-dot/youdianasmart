@@ -32,9 +32,19 @@
         .results-list { position: absolute; top: 55px; width: 100%; background: #1e1e2e; border-radius: 15px; z-index: 100; display: none; max-height: 300px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .video-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
 
-        /* --- PLAYER PRINCIPAL --- */
+        /* --- PLAYER PRINCIPAL COM LOADING --- */
         .player-container { width: 100%; background: #000; border-radius: 15px; overflow: hidden; position: relative; aspect-ratio: 16 / 9; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
-        .main-video { width: 100%; height: 100%; }
+        .main-video { width: 100%; height: 100%; display: block; }
+        
+        /* Spinner de Carregamento */
+        .loader { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1);
+            border-top: 5px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite; display: none; z-index: 5;
+        }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
         .overlay-controls { position: absolute; top: 0; width: 100%; height: 80%; display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: 0.3s; z-index: 10; pointer-events: none; }
         .player-container:hover .overlay-controls { opacity: 1; }
         .btn-overlay { background: rgba(0,0,0,0.6); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; pointer-events: auto; font-size: 1.2rem; }
@@ -46,29 +56,15 @@
         .btn-action { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
         .btn-action.active { color: #f39c12; background: rgba(243, 156, 18, 0.15); }
         
-        .desc-text { font-size: 0.9rem; color: #bbb; line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .desc-text.expanded { -webkit-line-clamp: unset; }
-        .btn-more { background: none; border: none; color: var(--primary); cursor: pointer; font-weight: bold; margin-top: 5px; font-size: 0.8rem; padding: 0; }
-
-        /* --- SEÇÃO DE DESTAQUES (MINI PLAYERS) --- */
+        /* --- MINI PLAYERS EM DESTAQUE --- */
         .highlights-section { margin-top: 25px; width: 100%; }
         .highlights-section h4 { margin: 0 0 15px 0; color: #fff; font-size: 1.1rem; }
-        
         .highlights-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
-        .highlights-container::-webkit-scrollbar { height: 6px; }
-        .highlights-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        
-        .highlight-card { 
-            flex: 0 0 180px; background: var(--card); border-radius: 12px; 
-            overflow: hidden; cursor: pointer; transition: 0.3s; position: relative;
-        }
-        .highlight-card:hover { transform: scale(1.05); background: rgba(255,255,255,0.15); }
-        
-        /* O segredo do Mini Player */
-        .mini-video-box { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; overflow: hidden; }
-        .mini-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: 0.3s; }
+        .highlight-card { flex: 0 0 180px; background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .highlight-card:hover { transform: scale(1.05); }
+        .mini-video-box { width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden; }
+        .mini-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
         .highlight-card:hover .mini-video { opacity: 1; }
-
         .card-info { padding: 10px; }
         .card-info b { display: block; font-size: 0.75rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-info span { font-size: 0.65rem; color: #aaa; }
@@ -89,7 +85,7 @@
     <div id="mainContent">
         <div class="user-header">
             <span id="txtUserEmail">...</span>
-            <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+            <button onclick="fazerLogout()" style="background:none; border:none; color:var(--primary); cursor:pointer; text-decoration:underline;">Sair</button>
         </div>
 
         <div class="search-container">
@@ -98,6 +94,7 @@
         </div>
 
         <div class="player-container">
+            <div class="loader" id="videoLoader"></div>
             <video id="videoPlayer" class="main-video" controls autoplay playsinline></video>
             <div class="overlay-controls">
                 <button class="btn-overlay" onclick="playPrevious()">⏮</button>
@@ -114,12 +111,11 @@
                 <button class="btn-action" id="likeBtn" onclick="registrarCurtida()"><span id="likeIcon">🤍</span> <b id="likeCount">0</b></button>
                 <button class="btn-action" onclick="compartilhar()"><span>🔗</span> Compartilhar</button>
             </div>
-            <p class="desc-text" id="videoDesc">Pesquise por títulos na barra acima.</p>
-            <button class="btn-more" id="btnLerMais" onclick="toggleDesc()" style="display:none;">... mais</button>
+            <p id="videoDesc" style="font-size: 0.9rem; color: #bbb;"></p>
         </div>
 
         <div class="highlights-section">
-            <h4>🔥 Em Destaque (Passe o mouse)</h4>
+            <h4>🔥 Em Destaque</h4>
             <div class="highlights-container" id="highlightsList"></div>
         </div>
     </div>
@@ -149,6 +145,18 @@
         let isLoginMode = true;
 
         const videoPlayer = document.getElementById('videoPlayer');
+        const loader = document.getElementById('videoLoader');
+
+        // --- LÓGICA DE CARREGAMENTO (SPINNER) ---
+        videoPlayer.onwaiting = () => loader.style.display = 'block';
+        videoPlayer.onplaying = () => loader.style.display = 'none';
+        videoPlayer.oncanplay = () => loader.style.display = 'none';
+
+        // --- AUTOPLAY (VÍDEOS RODA AUTOMÁTICO) ---
+        videoPlayer.onended = () => {
+            console.log("Vídeo terminou, rodando o próximo...");
+            playNext();
+        };
 
         // --- AUTH ---
         window.alternarModo = () => {
@@ -187,11 +195,9 @@
             });
         }
 
-        // --- RENDERIZAR MINI PLAYERS ---
         function renderHighlights() {
             const list = document.getElementById('highlightsList');
             const sorted = [...biblioteca].sort((a,b) => (b.curtidas || 0) - (a.curtidas || 0)).slice(0, 6);
-            
             list.innerHTML = sorted.map(v => {
                 const idx = biblioteca.indexOf(v);
                 return `
@@ -200,24 +206,26 @@
                          onmouseout="this.querySelector('video').pause(); this.querySelector('video').currentTime = 0;"
                          onclick="carregarVideo(${idx})">
                         <div class="mini-video-box">
-                            <video class="mini-video" muted loop playsinline>
-                                <source src="${v.arquivo}" type="video/mp4">
-                            </video>
+                            <video class="mini-video" muted loop playsinline><source src="${v.arquivo}" type="video/mp4"></video>
                         </div>
-                        <div class="card-info">
-                            <b>${v.titulo}</b>
-                            <span>❤️ ${v.curtidas || 0}</span>
-                        </div>
-                    </div>
-                `;
+                        <div class="card-info"><b>${v.titulo}</b><span>❤️ ${v.curtidas || 0}</span></div>
+                    </div>`;
             }).join('');
         }
 
         window.carregarVideo = (index) => {
+            if(index < 0 || index >= biblioteca.length) return;
             currentIndex = index;
             const v = biblioteca[index];
+            
+            loader.style.display = 'block'; // Mostra spinner ao iniciar troca
             videoPlayer.src = v.arquivo;
-            videoPlayer.play();
+            videoPlayer.play().catch(() => {
+                // Caso o navegador bloqueie o autoplay com som
+                videoPlayer.muted = true;
+                videoPlayer.play();
+            });
+
             document.getElementById('playingNow').innerText = v.titulo;
             document.getElementById('videoDesc').innerText = v.descricao || "";
             document.getElementById('likeCount').innerText = v.curtidas || 0;
@@ -225,10 +233,10 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        // --- CONTROLES AUXILIARES ---
         window.playNext = () => carregarVideo((currentIndex + 1) % biblioteca.length);
         window.playPrevious = () => carregarVideo((currentIndex - 1 + biblioteca.length) % biblioteca.length);
         window.skipTime = (s) => videoPlayer.currentTime += s;
+        
         window.searchVideos = () => {
             const t = document.getElementById('searchInput').value.toLowerCase();
             const list = document.getElementById('resultsList');
@@ -259,11 +267,6 @@
         }
 
         window.compartilhar = () => navigator.share ? navigator.share({url: window.location.href}) : alert("Link copiado!");
-        window.toggleDesc = () => {
-            const d = document.getElementById('videoDesc');
-            d.classList.toggle('expanded');
-            document.getElementById('btnLerMais').innerText = d.classList.contains('expanded') ? "recolher" : "... mais";
-        };
     </script>
 </body>
 </html>
