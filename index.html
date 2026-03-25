@@ -27,50 +27,31 @@
         #mainContent { display: none; width: 100%; max-width: 850px; flex-direction: column; }
         .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.8rem; opacity: 0.8; }
         
-        .search-container { position: relative; width: 100%; margin-bottom: 20px; }
-        #searchInput { width: 100%; padding: 12px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card); color: white; box-sizing: border-box; outline: none; }
-        .results-list { position: absolute; top: 55px; width: 100%; background: #1e1e2e; border-radius: 15px; z-index: 100; display: none; max-height: 300px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* BARRA DE PESQUISA COM LUPA */
+        .search-container { position: relative; width: 100%; margin-bottom: 20px; display: flex; align-items: center; }
+        #searchInput { width: 100%; padding: 12px 50px 12px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card); color: white; box-sizing: border-box; outline: none; }
+        .search-icon { position: absolute; right: 15px; cursor: pointer; font-size: 1.2rem; background: none; border: none; color: white; }
+        
+        .results-list { position: absolute; top: 55px; width: 100%; background: #1e1e2e; border-radius: 15px; z-index: 100; display: none; max-height: 250px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .video-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .video-item:hover { background: rgba(255,255,255,0.05); }
 
-        /* --- PLAYER PRINCIPAL COM LOADING --- */
-        .player-container { width: 100%; background: #000; border-radius: 15px; overflow: hidden; position: relative; aspect-ratio: 16 / 9; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
-        .main-video { width: 100%; height: 100%; display: block; }
-        
-        /* Spinner de Carregamento */
-        .loader { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1);
-            border-top: 5px solid var(--primary); border-radius: 50%;
-            animation: spin 1s linear infinite; display: none; z-index: 5;
-        }
-        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        /* --- PLAYER --- */
+        .player-container { width: 100%; background: #000; border-radius: 15px; overflow: hidden; position: relative; aspect-ratio: 16 / 9; }
+        .main-video { width: 100%; height: 100%; }
+        .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        .overlay-controls { position: absolute; top: 0; width: 100%; height: 80%; display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: 0.3s; z-index: 10; pointer-events: none; }
-        .player-container:hover .overlay-controls { opacity: 1; }
-        .btn-overlay { background: rgba(0,0,0,0.6); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; pointer-events: auto; font-size: 1.2rem; }
-
-        /* --- INFO E BOTÕES --- */
-        .video-details { margin-top: 15px; background: var(--card); padding: 20px; border-radius: 15px; }
-        #playingNow { margin: 0; font-size: 1.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
-        .actions { display: flex; gap: 10px; margin: 15px 0; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; }
-        .btn-action { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
-        .btn-action.active { color: #f39c12; background: rgba(243, 156, 18, 0.15); }
-        
-        /* --- MINI PLAYERS EM DESTAQUE --- */
-        .highlights-section { margin-top: 25px; width: 100%; }
-        .highlights-section h4 { margin: 0 0 15px 0; color: #fff; font-size: 1.1rem; }
-        .highlights-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
-        .highlight-card { flex: 0 0 180px; background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.3s; }
-        .highlight-card:hover { transform: scale(1.05); }
-        .mini-video-box { width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden; }
-        .mini-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
-        .highlight-card:hover .mini-video { opacity: 1; }
-        .card-info { padding: 10px; }
-        .card-info b { display: block; font-size: 0.75rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-info span { font-size: 0.65rem; color: #aaa; }
+        /* --- DESTAQUES --- */
+        .highlights-section { margin-top: 25px; }
+        .highlights-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+        .highlight-card { flex: 0 0 160px; background: var(--card); border-radius: 10px; overflow: hidden; cursor: pointer; }
+        .mini-video-box { width: 100%; aspect-ratio: 16/9; background: #000; }
+        .mini-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+        .card-info { padding: 8px; font-size: 0.7rem; }
     </style>
 </head>
-<body>
+<body onclick="fecharSugestoes(event)">
 
     <div id="authScreen">
         <div class="auth-container">
@@ -78,44 +59,38 @@
             <input type="email" id="emailUser" placeholder="E-mail">
             <input type="password" id="passUser" placeholder="Senha">
             <button class="btn-main" onclick="executarAuth()">Acessar</button>
-            <button class="btn-switch" onclick="alternarModo()">Não tem conta? Cadastre-se</button>
+            <button class="btn-switch" onclick="alternarModo()">Cadastre-se</button>
         </div>
     </div>
 
     <div id="mainContent">
         <div class="user-header">
             <span id="txtUserEmail">...</span>
-            <button onclick="fazerLogout()" style="background:none; border:none; color:var(--primary); cursor:pointer; text-decoration:underline;">Sair</button>
+            <button onclick="fazerLogout()" style="background:none; border:none; color:var(--primary); cursor:pointer;">Sair</button>
         </div>
 
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar vídeo..." oninput="searchVideos()">
+        <div class="search-container" onclick="event.stopPropagation()">
+            <input type="text" id="searchInput" placeholder="O que vamos assistir?" oninput="searchVideos()" onkeyup="if(event.key==='Enter') searchVideos()">
+            <button class="search-icon" onclick="searchVideos()">🔍</button>
             <div class="results-list" id="resultsList"></div>
         </div>
 
         <div class="player-container">
             <div class="loader" id="videoLoader"></div>
             <video id="videoPlayer" class="main-video" controls autoplay playsinline></video>
-            <div class="overlay-controls">
-                <button class="btn-overlay" onclick="playPrevious()">⏮</button>
-                <button class="btn-overlay" onclick="skipTime(-10)">-10s</button>
-                <button class="btn-overlay" onclick="skipTime(10)">+10s</button>
-                <button class="btn-overlay" onclick="playNext()">⏭</button>
-            </div>
         </div>
 
-        <div class="video-details">
-            <h3 id="playingNow">Selecione um vídeo</h3>
-            <div class="actions">
-                <button class="btn-action" id="favBtn" onclick="toggleFavorite()"><span id="favIcon">☆</span> Salvar</button>
-                <button class="btn-action" id="likeBtn" onclick="registrarCurtida()"><span id="likeIcon">🤍</span> <b id="likeCount">0</b></button>
-                <button class="btn-action" onclick="compartilhar()"><span>🔗</span> Compartilhar</button>
+        <div class="video-details" style="margin-top:15px; background:var(--card); padding:15px; border-radius:10px;">
+            <h3 id="playingNow" style="margin:0;">Carregando...</h3>
+            <p id="videoDesc" style="font-size:0.85rem; color:#bbb; margin-top:5px;"></p>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button onclick="registrarCurtida()" style="background:none; border:none; color:white; cursor:pointer;">❤️ <span id="likeCount">0</span></button>
+                <button onclick="compartilhar()" style="background:none; border:none; color:white; cursor:pointer;">🔗 Compartilhar</button>
             </div>
-            <p id="videoDesc" style="font-size: 0.9rem; color: #bbb;"></p>
         </div>
 
         <div class="highlights-section">
-            <h4>🔥 Em Destaque</h4>
+            <h4 style="margin-bottom:10px;">🔥 Recomendados</h4>
             <div class="highlights-container" id="highlightsList"></div>
         </div>
     </div>
@@ -141,37 +116,25 @@
         
         let biblioteca = [];
         let currentIndex = -1;
-        let meusFavoritos = JSON.parse(localStorage.getItem('favs_user')) || [];
         let isLoginMode = true;
+        let primeiraCarga = true;
 
         const videoPlayer = document.getElementById('videoPlayer');
         const loader = document.getElementById('videoLoader');
 
-        // --- LÓGICA DE CARREGAMENTO (SPINNER) ---
+        // --- AUTOPLAY E SPINNER ---
         videoPlayer.onwaiting = () => loader.style.display = 'block';
         videoPlayer.onplaying = () => loader.style.display = 'none';
-        videoPlayer.oncanplay = () => loader.style.display = 'none';
-
-        // --- AUTOPLAY (VÍDEOS RODA AUTOMÁTICO) ---
-        videoPlayer.onended = () => {
-            console.log("Vídeo terminou, rodando o próximo...");
-            playNext();
-        };
+        videoPlayer.onended = () => carregarVideo((currentIndex + 1) % biblioteca.length);
 
         // --- AUTH ---
-        window.alternarModo = () => {
-            isLoginMode = !isLoginMode;
-            document.getElementById('authTitle').innerText = isLoginMode ? "YouVideo Login" : "Criar Conta";
-        };
-
+        window.alternarModo = () => { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "YouVideo Login" : "Criar Conta"; };
         window.executarAuth = () => {
-            const email = document.getElementById('emailUser').value;
-            const pass = document.getElementById('passUser').value;
-            if(isLoginMode) signInWithEmailAndPassword(auth, email, pass).catch(() => alert("Erro no login!"));
-            else createUserWithEmailAndPassword(auth, email, pass).catch(() => alert("Erro ao cadastrar!"));
+            const e = document.getElementById('emailUser').value, p = document.getElementById('passUser').value;
+            if(isLoginMode) signInWithEmailAndPassword(auth, e, p).catch(() => alert("Erro!"));
+            else createUserWithEmailAndPassword(auth, e, p).catch(() => alert("Erro!"));
         };
-
-        window.fazerLogout = () => signOut(auth);
+        window.fazerLogout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -189,54 +152,20 @@
             onValue(ref(db, 'videos'), (snap) => {
                 const data = snap.val();
                 if(data) {
+                    // Transforma em array e mantém a ordem do Firebase
                     biblioteca = Object.keys(data).map(key => ({ id_firebase: key, ...data[key] }));
+                    
+                    // Lógica para carregar o ÚLTIMO vídeo adicionado na primeira vez
+                    if(primeiraCarga && biblioteca.length > 0) {
+                        carregarVideo(biblioteca.length - 1);
+                        primeiraCarga = false;
+                    }
                     renderHighlights();
                 }
             });
         }
 
-        function renderHighlights() {
-            const list = document.getElementById('highlightsList');
-            const sorted = [...biblioteca].sort((a,b) => (b.curtidas || 0) - (a.curtidas || 0)).slice(0, 6);
-            list.innerHTML = sorted.map(v => {
-                const idx = biblioteca.indexOf(v);
-                return `
-                    <div class="highlight-card" 
-                         onmouseover="this.querySelector('video').play()" 
-                         onmouseout="this.querySelector('video').pause(); this.querySelector('video').currentTime = 0;"
-                         onclick="carregarVideo(${idx})">
-                        <div class="mini-video-box">
-                            <video class="mini-video" muted loop playsinline><source src="${v.arquivo}" type="video/mp4"></video>
-                        </div>
-                        <div class="card-info"><b>${v.titulo}</b><span>❤️ ${v.curtidas || 0}</span></div>
-                    </div>`;
-            }).join('');
-        }
-
-        window.carregarVideo = (index) => {
-            if(index < 0 || index >= biblioteca.length) return;
-            currentIndex = index;
-            const v = biblioteca[index];
-            
-            loader.style.display = 'block'; // Mostra spinner ao iniciar troca
-            videoPlayer.src = v.arquivo;
-            videoPlayer.play().catch(() => {
-                // Caso o navegador bloqueie o autoplay com som
-                videoPlayer.muted = true;
-                videoPlayer.play();
-            });
-
-            document.getElementById('playingNow').innerText = v.titulo;
-            document.getElementById('videoDesc').innerText = v.descricao || "";
-            document.getElementById('likeCount').innerText = v.curtidas || 0;
-            verificarFavorito(v.id_firebase);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-
-        window.playNext = () => carregarVideo((currentIndex + 1) % biblioteca.length);
-        window.playPrevious = () => carregarVideo((currentIndex - 1 + biblioteca.length) % biblioteca.length);
-        window.skipTime = (s) => videoPlayer.currentTime += s;
-        
+        // --- PESQUISA E LIMPEZA ---
         window.searchVideos = () => {
             const t = document.getElementById('searchInput').value.toLowerCase();
             const list = document.getElementById('resultsList');
@@ -246,26 +175,38 @@
             list.style.display = fits.length ? 'block' : 'none';
         };
 
-        window.registrarCurtida = () => {
-            if(currentIndex === -1) return;
-            update(ref(db, `videos/${biblioteca[currentIndex].id_firebase}`), { curtidas: increment(1) });
-            document.getElementById('likeIcon').innerText = "❤️";
+        window.fecharSugestoes = (e) => {
+            // Se clicar fora da barra de busca, esconde a lista
+            document.getElementById('resultsList').style.display = 'none';
         };
 
-        window.toggleFavorite = () => {
-            const id = biblioteca[currentIndex].id_firebase;
-            const p = meusFavoritos.indexOf(id);
-            if(p > -1) meusFavoritos.splice(p, 1); else meusFavoritos.push(id);
-            localStorage.setItem('favs_user', JSON.stringify(meusFavoritos));
-            verificarFavorito(id);
+        window.carregarVideo = (index) => {
+            currentIndex = index;
+            const v = biblioteca[index];
+            videoPlayer.src = v.arquivo;
+            videoPlayer.play();
+            document.getElementById('playingNow').innerText = v.titulo;
+            document.getElementById('videoDesc').innerText = v.descricao || "";
+            document.getElementById('likeCount').innerText = v.curtidas || 0;
+            document.getElementById('resultsList').style.display = 'none';
+            document.getElementById('searchInput').value = '';
         };
 
-        function verificarFavorito(id) {
-            const isFav = meusFavoritos.includes(id);
-            document.getElementById('favIcon').innerText = isFav ? "⭐" : "☆";
-            document.getElementById('favBtn').classList.toggle('active', isFav);
+        function renderHighlights() {
+            const list = document.getElementById('highlightsList');
+            const sorted = [...biblioteca].reverse().slice(0, 6); // Mostra os últimos adicionados primeiro
+            list.innerHTML = sorted.map(v => {
+                const idx = biblioteca.indexOf(v);
+                return `
+                    <div class="highlight-card" onclick="carregarVideo(${idx})" 
+                         onmouseover="this.querySelector('video').play()" onmouseout="this.querySelector('video').pause()">
+                        <div class="mini-video-box"><video class="mini-video" muted loop playsinline><source src="${v.arquivo}"></video></div>
+                        <div class="card-info"><b>${v.titulo}</b></div>
+                    </div>`;
+            }).join('');
         }
 
+        window.registrarCurtida = () => update(ref(db, `videos/${biblioteca[currentIndex].id_firebase}`), { curtidas: increment(1) });
         window.compartilhar = () => navigator.share ? navigator.share({url: window.location.href}) : alert("Link copiado!");
     </script>
 </body>
