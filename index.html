@@ -27,26 +27,33 @@
         #mainContent { display: none; width: 100%; max-width: 850px; flex-direction: column; }
         .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.8rem; opacity: 0.8; }
         
-        /* BARRA DE PESQUISA COM LUPA */
         .search-container { position: relative; width: 100%; margin-bottom: 20px; display: flex; align-items: center; }
         #searchInput { width: 100%; padding: 12px 50px 12px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card); color: white; box-sizing: border-box; outline: none; }
         .search-icon { position: absolute; right: 15px; cursor: pointer; font-size: 1.2rem; background: none; border: none; color: white; }
         
         .results-list { position: absolute; top: 55px; width: 100%; background: #1e1e2e; border-radius: 15px; z-index: 100; display: none; max-height: 250px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .video-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
-        .video-item:hover { background: rgba(255,255,255,0.05); }
 
-        /* --- PLAYER --- */
-        .player-container { width: 100%; background: #000; border-radius: 15px; overflow: hidden; position: relative; aspect-ratio: 16 / 9; }
+        /* --- PLAYER COM CONTROLES --- */
+        .player-container { width: 100%; background: #000; border-radius: 15px; overflow: hidden; position: relative; aspect-ratio: 16 / 9; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .main-video { width: 100%; height: 100%; }
-        .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+        
+        .overlay-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: 0.3s; z-index: 10; pointer-events: none; }
+        .player-container:hover .overlay-controls { opacity: 1; }
+        
+        .btn-overlay { background: rgba(0,0,0,0.6); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; pointer-events: auto; font-size: 1.2rem; transition: 0.2s; min-width: 55px; }
+        .btn-overlay:hover { background: var(--primary); transform: scale(1.1); }
+        .btn-small { font-size: 0.9rem; min-width: 45px; }
+
+        .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; display: none; z-index: 5; }
         @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
         /* --- DESTAQUES --- */
         .highlights-section { margin-top: 25px; }
         .highlights-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
-        .highlight-card { flex: 0 0 160px; background: var(--card); border-radius: 10px; overflow: hidden; cursor: pointer; }
-        .mini-video-box { width: 100%; aspect-ratio: 16/9; background: #000; }
+        .highlight-card { flex: 0 0 160px; background: var(--card); border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .highlight-card:hover { transform: translateY(-5px); }
+        .mini-video-box { width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden; }
         .mini-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
         .card-info { padding: 8px; font-size: 0.7rem; }
     </style>
@@ -66,7 +73,7 @@
     <div id="mainContent">
         <div class="user-header">
             <span id="txtUserEmail">...</span>
-            <button onclick="fazerLogout()" style="background:none; border:none; color:var(--primary); cursor:pointer;">Sair</button>
+            <button onclick="fazerLogout()" style="background:none; border:none; color:var(--primary); cursor:pointer; text-decoration:underline;">Sair</button>
         </div>
 
         <div class="search-container" onclick="event.stopPropagation()">
@@ -78,14 +85,21 @@
         <div class="player-container">
             <div class="loader" id="videoLoader"></div>
             <video id="videoPlayer" class="main-video" controls autoplay playsinline></video>
+            
+            <div class="overlay-controls">
+                <button class="btn-overlay" onclick="playPrevious()" title="Anterior">⏮</button>
+                <button class="btn-overlay btn-small" onclick="skipTime(-10)" title="Voltar 10s">-10s</button>
+                <button class="btn-overlay btn-small" onclick="skipTime(10)" title="Avançar 10s">+10s</button>
+                <button class="btn-overlay" onclick="playNext()" title="Próximo">⏭</button>
+            </div>
         </div>
 
         <div class="video-details" style="margin-top:15px; background:var(--card); padding:15px; border-radius:10px;">
             <h3 id="playingNow" style="margin:0;">Carregando...</h3>
             <p id="videoDesc" style="font-size:0.85rem; color:#bbb; margin-top:5px;"></p>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button onclick="registrarCurtida()" style="background:none; border:none; color:white; cursor:pointer;">❤️ <span id="likeCount">0</span></button>
-                <button onclick="compartilhar()" style="background:none; border:none; color:white; cursor:pointer;">🔗 Compartilhar</button>
+            <div style="display:flex; gap:15px; margin-top:10px;">
+                <button onclick="registrarCurtida()" style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center; gap:5px;">❤️ <span id="likeCount">0</span></button>
+                <button onclick="compartilhar()" style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center; gap:5px;">🔗 Compartilhar</button>
             </div>
         </div>
 
@@ -122,17 +136,16 @@
         const videoPlayer = document.getElementById('videoPlayer');
         const loader = document.getElementById('videoLoader');
 
-        // --- AUTOPLAY E SPINNER ---
         videoPlayer.onwaiting = () => loader.style.display = 'block';
         videoPlayer.onplaying = () => loader.style.display = 'none';
-        videoPlayer.onended = () => carregarVideo((currentIndex + 1) % biblioteca.length);
+        videoPlayer.onended = () => playNext();
 
         // --- AUTH ---
-        window.alternarModo = () => { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "YouVideo Login" : "Criar Conta"; };
+        window.alternarModo = () => { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "YouDiana Login" : "Criar Conta"; };
         window.executarAuth = () => {
             const e = document.getElementById('emailUser').value, p = document.getElementById('passUser').value;
-            if(isLoginMode) signInWithEmailAndPassword(auth, e, p).catch(() => alert("Erro!"));
-            else createUserWithEmailAndPassword(auth, e, p).catch(() => alert("Erro!"));
+            if(isLoginMode) signInWithEmailAndPassword(auth, e, p).catch(() => alert("Erro no login!"));
+            else createUserWithEmailAndPassword(auth, e, p).catch(() => alert("Erro ao cadastrar!"));
         };
         window.fazerLogout = () => signOut(auth).then(() => location.reload());
 
@@ -152,10 +165,7 @@
             onValue(ref(db, 'videos'), (snap) => {
                 const data = snap.val();
                 if(data) {
-                    // Transforma em array e mantém a ordem do Firebase
                     biblioteca = Object.keys(data).map(key => ({ id_firebase: key, ...data[key] }));
-                    
-                    // Lógica para carregar o ÚLTIMO vídeo adicionado na primeira vez
                     if(primeiraCarga && biblioteca.length > 0) {
                         carregarVideo(biblioteca.length - 1);
                         primeiraCarga = false;
@@ -165,7 +175,6 @@
             });
         }
 
-        // --- PESQUISA E LIMPEZA ---
         window.searchVideos = () => {
             const t = document.getElementById('searchInput').value.toLowerCase();
             const list = document.getElementById('resultsList');
@@ -176,11 +185,11 @@
         };
 
         window.fecharSugestoes = (e) => {
-            // Se clicar fora da barra de busca, esconde a lista
             document.getElementById('resultsList').style.display = 'none';
         };
 
         window.carregarVideo = (index) => {
+            if (index < 0 || index >= biblioteca.length) return;
             currentIndex = index;
             const v = biblioteca[index];
             videoPlayer.src = v.arquivo;
@@ -192,14 +201,22 @@
             document.getElementById('searchInput').value = '';
         };
 
+        window.playNext = () => carregarVideo((currentIndex + 1) % biblioteca.length);
+        window.playPrevious = () => carregarVideo((currentIndex - 1 + biblioteca.length) % biblioteca.length);
+        
+        // Função para pular tempo
+        window.skipTime = (segundos) => {
+            videoPlayer.currentTime += segundos;
+        };
+
         function renderHighlights() {
             const list = document.getElementById('highlightsList');
-            const sorted = [...biblioteca].reverse().slice(0, 6); // Mostra os últimos adicionados primeiro
+            const sorted = [...biblioteca].reverse().slice(0, 10);
             list.innerHTML = sorted.map(v => {
                 const idx = biblioteca.indexOf(v);
                 return `
                     <div class="highlight-card" onclick="carregarVideo(${idx})" 
-                         onmouseover="this.querySelector('video').play()" onmouseout="this.querySelector('video').pause()">
+                         onmouseover="this.querySelector('video').play()" onmouseout="this.querySelector('video').pause(); this.querySelector('video').currentTime = 0;">
                         <div class="mini-video-box"><video class="mini-video" muted loop playsinline><source src="${v.arquivo}"></video></div>
                         <div class="card-info"><b>${v.titulo}</b></div>
                     </div>`;
