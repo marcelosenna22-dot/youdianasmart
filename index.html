@@ -71,7 +71,7 @@
         #commentsBody { display: none; padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
         
         .comment-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .comment-input-group input { flex: 1; padding: 10px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 0.85rem; }
+        .comment-input-group input { flex: 1; padding: 10px; border-radius: 8px; border: none; background: rgba(0, 0, 0, 1); color: white; font-size: 0.85rem; }
         .comment-list { max-height: 250px; overflow-y: auto; font-size: 0.9rem; }
         .comment-item { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .comment-user { color: var(--primary); font-weight: 600; font-size: 0.75rem; display: block; margin-bottom: 2px; }
@@ -145,7 +145,7 @@
             <div id="commentsBody">
                 <div class="comment-input-group">
                     <input type="text" id="newComment" placeholder="Escreva algo...">
-                    <button class="btn-main" style="width: auto; padding: 0 15px;" onclick="enviarComentario()">Postar</button>
+                    <button class="btn-main" style="width: auto; padding: 0 15px; background:#000;" onclick="enviarComentario()">Postar</button>
                 </div>
                 <div class="comment-list" id="commentList"></div>
             </div>
