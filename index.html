@@ -16,7 +16,7 @@
 
         body { font-family: 'Poppins', sans-serif; background: var(--bg-gradient); color: var(--text); margin: 0; padding: 10px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; overflow-x: hidden; }
 
-        /* --- SPLASH & AUTH (Mantidos iguais) --- */
+        /* --- SPLASH & AUTH --- */
         #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-gradient); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20000; transition: opacity 0.8s ease, visibility 0.8s; }
         .splash-logo { font-size: 2.5rem; font-weight: 600; color: white; text-shadow: 0 0 20px rgba(255, 71, 87, 0.6); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
@@ -48,7 +48,6 @@
             background: rgba(0,0,0,0.4);
             opacity: 0; transition: opacity 0.4s ease; z-index: 10; pointer-events: none; 
         }
-        /* Classe ativa para mostrar controles */
         .overlay-controls.active { opacity: 1; pointer-events: auto; }
 
         .btn-overlay { background: rgba(0,0,0,0.6); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; min-width: 50px; }
@@ -63,7 +62,7 @@
         }
         #videoDesc.expanded { -webkit-line-clamp: unset; display: block; color: #fff; }
 
-        /* COMENTÁRIOS & LISTAS (Mantidos) */
+        /* COMENTÁRIOS & LISTAS */
         .comments-section { margin-top: 10px; background: var(--card); border-radius: 15px; overflow: hidden; }
         .comments-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         #commentsBody { display: none; padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
@@ -107,6 +106,7 @@
                 <button class="btn-overlay" onclick="event.stopPropagation(); togglePlay()"><span id="playIcon">⏸</span></button>
                 <button class="btn-overlay" onclick="event.stopPropagation(); skipTime(10)">+10s</button>
                 <button class="btn-overlay" onclick="event.stopPropagation(); playNext()">⏭</button>
+                <button class="btn-overlay" onclick="event.stopPropagation(); toggleFullScreen()" style="position: absolute; right: 15px; bottom: 15px; min-width: 40px; padding: 10px;">⛶</button>
             </div>
         </div>
 
@@ -167,7 +167,7 @@
             clearTimeout(controlTimer);
             controlTimer = setTimeout(() => {
                 panel.classList.remove('active');
-            }, 2000); // Some após 2 segundos
+            }, 2000);
         };
 
         window.togglePlay = () => {
@@ -175,7 +175,18 @@
             const icon = document.getElementById('playIcon');
             if(vp.paused) { vp.play(); icon.innerText = "⏸"; }
             else { vp.pause(); icon.innerText = "▶"; }
-            mostrarControles(); // Reseta o timer ao interagir
+            mostrarControles();
+        };
+
+        // FUNÇÃO TELA CHEIA
+        window.toggleFullScreen = () => {
+            const el = document.getElementById('playerArea');
+            if (!document.fullscreenElement) {
+                if (el.requestFullscreen) el.requestFullscreen();
+                else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
         };
 
         // BANCO & PLAYER
@@ -201,7 +212,6 @@
             document.getElementById('playIcon').innerText = "⏸";
             document.getElementById('playingNow').innerText = v.titulo;
             
-            // Descrição (reseta expansão ao trocar de vídeo)
             const d = document.getElementById('videoDesc');
             d.classList.remove('expanded');
             d.innerText = v.descricao || "Sem descrição.";
@@ -218,7 +228,6 @@
             document.getElementById('commentsBody').style.display = 'none';
         };
 
-        // ... (renderRecent, renderHistory, registrarCurtida, registrarCompartilhamento, searchVideos, carregarComentarios, enviarComentario permanecem iguais)
         function renderRecent() { const list = [...biblioteca].reverse().slice(0, 15); document.getElementById('recentList').innerHTML = list.map(v => `<div class="video-card" onclick="carregarVideo(${biblioteca.indexOf(v)})"><div class="thumb-wrapper"><video class="thumb-video" muted><source src="${v.arquivo}"></video></div><div class="card-info"><b>${v.titulo}</b></div></div>`).join(''); }
         function renderHistory() { const sec = document.getElementById('sectionHistory'); if(historico.length === 0) { sec.style.display = 'none'; return; } sec.style.display = 'block'; document.getElementById('historyList').innerHTML = historico.map(v => `<div class="video-card" onclick="reproduzirDoHistorico('${v.id_firebase}')"><div class="thumb-wrapper"><video class="thumb-video" muted><source src="${v.arquivo}"></video></div><div class="card-info"><b>${v.titulo}</b></div></div>`).join(''); }
         window.reproduzirDoHistorico = (id) => { const idx = biblioteca.findIndex(v => v.id_firebase === id); if(idx !== -1) carregarVideo(idx); };
