@@ -28,44 +28,33 @@
 
         /* --- LAYOUT --- */
         #mainContent { display: none; width: 100%; max-width: 850px; flex-direction: column; position: relative; }
-        .app-logo { font-size: 1.4rem; font-weight: 600; color: white; margin-bottom: 5px; }
         
+        /* HEADER COM USUARIO E SAIR */
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%; }
+        .app-logo { font-size: 1.2rem; font-weight: 600; color: white; }
+        .user-info { display: flex; align-items: center; gap: 10px; font-size: 0.75rem; opacity: 0.8; }
+        .btn-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 0.7rem; }
+
         /* SEARCH */
         .search-container { position: relative; width: 100%; margin-bottom: 15px; }
         #searchInput { width: 100%; padding: 10px 15px 10px 40px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); background: var(--card); color: white; box-sizing: border-box; outline: none; }
         .results-list { position: absolute; top: 45px; width: 100%; background: #111; border-radius: 15px; z-index: 100; display: none; flex-direction: column; max-height: 200px; overflow-y: auto; border: 1px solid #333; }
-        .video-item { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
 
-        /* --- PLAYER ADAPTATIVO (EXPANSÍVEL) --- */
+        /* --- PLAYER ADAPTATIVO --- */
         .player-container { 
-            width: 100%; 
-            background: #000; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            position: relative; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            transition: all 0.5s ease; /* Transição suave ao mudar de formato */
-            max-height: 80vh; /* Não deixa o vídeo vertical sumir da tela */
+            width: 100%; background: #000; border-radius: 15px; overflow: hidden; 
+            position: relative; display: flex; justify-content: center; align-items: center;
+            transition: all 0.5s ease; max-height: 75vh; 
         }
-        .main-video { 
-            width: 100%; 
-            max-height: 80vh; 
-            display: block; 
-            object-fit: contain; 
-        }
+        .main-video { width: 100%; max-height: 75vh; display: block; object-fit: contain; }
 
         /* CONTROLES */
         .overlay-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.3s; z-index: 5; pointer-events: none; }
         .overlay-controls.active { opacity: 1; pointer-events: auto; }
         .btn-overlay { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 50%; cursor: pointer; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; }
-
-        /* BARRA LATERAL FIXA */
         .side-controls { position: absolute; right: 10px; bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 20; }
         .btn-side { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.15); color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .btn-side span { font-size: 0.6rem; font-weight: 600; }
-
         .btn-fs { position: absolute; right: 10px; top: 10px; background: rgba(0,0,0,0.4); border: none; color: white; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; z-index: 10; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
 
         /* --- COMENTÁRIOS --- */
@@ -75,7 +64,6 @@
         .comment-input-wrapper { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(255,71,87,0.2); }
         .comment-input-group { display: flex; gap: 8px; }
         .comment-input-group input { flex: 1; padding: 10px 15px; border-radius: 20px; border: none; background: #000; color: white; outline: none; font-size: 0.85rem; }
-        
         .comment-list { max-height: 250px; overflow-y: auto; font-size: 0.8rem; }
         .comment-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03); transition: opacity 0.4s; }
         .comment-user { color: var(--primary); font-weight: 600; font-size: 0.75rem; display: block; }
@@ -85,7 +73,7 @@
         .section-title { margin: 20px 0 10px 0; font-size: 0.9rem; font-weight: 600; }
         .scroll-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .video-card { flex: 0 0 140px; background: var(--card); border-radius: 10px; overflow: hidden; cursor: pointer; }
-        .thumb-video { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.7; }
+        .thumb-video-item { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.7; }
         
         .loader { position: absolute; width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; display: none; z-index: 10; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -104,7 +92,13 @@
     </div>
 
     <div id="mainContent">
-        <div class="app-logo">YouDiana Smart</div>
+        <header class="app-header">
+            <div class="app-logo">YouDiana Smart</div>
+            <div class="user-info">
+                <span id="txtUserEmail">...</span>
+                <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+            </div>
+        </header>
         
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Pesquisar..." oninput="searchVideos()">
@@ -133,7 +127,7 @@
 
         <div style="margin-top: 10px; background: var(--card); padding: 12px; border-radius: 12px;">
             <h3 id="playingNow" style="margin:0; font-size: 1rem;">Carregando...</h3>
-            <p id="videoDesc" style="font-size: 0.8rem; color: #aaa;" onclick="this.classList.toggle('expanded')"></p>
+            <p id="videoDesc" style="font-size: 0.8rem; color: #aaa;"></p>
         </div>
 
         <div class="comments-section" id="sectionComments">
@@ -154,6 +148,11 @@
 
         <h4 class="section-title">✨ Adicionados recentemente</h4>
         <div class="scroll-container" id="recentList"></div>
+
+        <div id="containerHistorico" style="display:none;">
+            <h4 class="section-title">🕒 Continuar assistindo</h4>
+            <div class="scroll-container" id="historyList"></div>
+        </div>
     </div>
 
 <script type="module">
@@ -179,6 +178,7 @@
     let currentIndex = -1;
     let userAtual = null;
     let controlTimer;
+    let historico = JSON.parse(localStorage.getItem('user_history_smart')) || [];
 
     // AUTH
     window.executarAuth = () => {
@@ -187,14 +187,18 @@
         signInWithEmailAndPassword(auth, email, senha).catch(() => alert("Erro no login"));
     };
 
+    window.fazerLogout = () => signOut(auth);
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             userAtual = user;
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('mainContent').style.display = 'flex';
+            document.getElementById('txtUserEmail').innerText = user.email;
             conectarBanco();
         } else {
             document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('mainContent').style.display = 'none';
         }
     });
 
@@ -219,7 +223,6 @@
         else document.exitFullscreen?.();
     };
 
-    // ADAPTIVE PLAYER
     function conectarBanco() {
         onValue(ref(db, 'videos'), (snap) => {
             const data = snap.val();
@@ -237,7 +240,6 @@
         const v = biblioteca[idx];
         const vp = document.getElementById('videoPlayer');
         
-        // Resetando animação e carregando fonte
         vp.src = v.arquivo;
         vp.play();
 
@@ -246,10 +248,16 @@
         document.getElementById('likeCountSide').innerText = v.curtidas || 0;
         document.getElementById('shareCountSide').innerText = v.compartilhamentos || 0;
         
+        // Salvar Histórico
+        historico = historico.filter(i => i.id_firebase !== v.id_firebase);
+        historico.unshift(v);
+        if(historico.length > 15) historico.pop();
+        localStorage.setItem('user_history_smart', JSON.stringify(historico));
+
+        renderLists();
         carregarComentarios(v.id_firebase);
     };
 
-    // COMENTÁRIOS COM EXCLUSÃO
     function carregarComentarios(videoId) {
         onValue(ref(db, `comentarios/${videoId}`), (s) => {
             const data = s.val();
@@ -277,13 +285,8 @@
 
     window.excluirComentario = (commentId) => {
         if(confirm("Apagar comentário?")) {
-            const item = document.getElementById(`c-${commentId}`);
-            if(item) item.style.opacity = '0'; // Efeito visual antes de sumir
-            
             const videoId = biblioteca[currentIndex].id_firebase;
-            setTimeout(() => {
-                remove(ref(db, `comentarios/${videoId}/${commentId}`));
-            }, 400);
+            remove(ref(db, `comentarios/${videoId}/${commentId}`));
         }
     };
 
@@ -321,13 +324,36 @@
     };
 
     function renderLists() {
+        // Recentes
         const recent = [...biblioteca].reverse().slice(0, 10);
         document.getElementById('recentList').innerHTML = recent.map(v => `
             <div class="video-card" onclick="carregarVideo(${biblioteca.indexOf(v)})">
-                <video class="thumb-video" src="${v.arquivo}"></video>
+                <video class="thumb-video-item" src="${v.arquivo}"></video>
                 <div style="padding:5px; font-size:0.7rem;"><b>${v.titulo}</b></div>
             </div>`).join('');
+
+        // Historico
+        if(historico.length > 0) {
+            document.getElementById('containerHistorico').style.display = 'block';
+            document.getElementById('historyList').innerHTML = historico.map(v => {
+                const globalIdx = biblioteca.findIndex(b => b.id_firebase === v.id_firebase);
+                return `
+                    <div class="video-card" onclick="carregarVideo(${globalIdx})">
+                        <video class="thumb-video-item" src="${v.arquivo}"></video>
+                        <div style="padding:5px; font-size:0.7rem;"><b>${v.titulo}</b></div>
+                    </div>`;
+            }).join('');
+        }
     }
+
+    window.searchVideos = () => {
+        const t = document.getElementById('searchInput').value.toLowerCase();
+        const l = document.getElementById('resultsList');
+        if(!t) { l.style.display = 'none'; return; }
+        const f = biblioteca.filter(v => v.titulo.toLowerCase().includes(t));
+        l.innerHTML = f.map(v => `<div style="padding:10px; border-bottom:1px solid #222; cursor:pointer;" onclick="carregarVideo(${biblioteca.indexOf(v)})">${v.titulo}</div>`).join('');
+        l.style.display = f.length ? 'flex' : 'none';
+    };
 
     window.playNext = () => carregarVideo((currentIndex + 1) % biblioteca.length);
     window.playPrevious = () => carregarVideo((currentIndex - 1 + biblioteca.length) % biblioteca.length);
