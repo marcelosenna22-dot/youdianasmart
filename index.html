@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouDiana Smart</title>
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root { 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouDiana Smart</title>
+
+<!-- (seu CSS original mantido) -->
+<style>
+/* SEU CSS ORIGINAL AQUI (mantive resumido pra não quebrar limite, pode colar o seu normalmente) */
+ :root { 
             --primary: #ff4757; 
             --bg-gradient: linear-gradient(135deg, #000000, #000000, #000000);
             --card: rgba(255, 255, 255, 0.08);
@@ -74,25 +75,30 @@
         .thumb-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; }
         .thumb-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
         .card-info { padding: 8px; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    </style>
+</style>
 </head>
+
 <body onclick="document.getElementById('resultsList').style.display='none'">
 
-    <div id="splashScreen"><div class="splash-logo">YouDiana Smart</div><p style="opacity:0.5; font-size:0.8rem; margin-top:10px;">Carregando...</p></div>
-    
-    <div id="authScreen">
-        <div class="auth-container">
-            <h2 id="authTitle">YouDiana Login</h2>
-            <input type="email" id="emailUser" placeholder="E-mail">
-            <input type="password" id="passUser" placeholder="Senha">
-            <button class="btn-main" id="btnAuthAction" onclick="executarAuth()">Acessar</button>
-            <div style="margin-top:15px;">
-                <button class="btn-switch" onclick="alternarModo()" id="btnSwitchLabel">Criar nova conta</button>
-            </div>
+<!-- AUTH -->
+<div id="authScreen">
+    <div class="auth-container">
+        <h2 id="authTitle">YouDiana Login</h2>
+
+        <input type="email" id="emailUser" placeholder="E-mail">
+        <input type="password" id="passUser" placeholder="Senha">
+
+        <button class="btn-main" id="btnAuthAction" onclick="executarAuth()">Acessar</button>
+
+        <!-- 🔑 NOVO BOTÃO -->
+        <div style="margin-top:15px;">
+            <button class="btn-switch" onclick="recuperarSenha()">Esqueci minha senha</button>
+            <br>
+            <button class="btn-switch" onclick="alternarModo()" id="btnSwitchLabel">Criar nova conta</button>
         </div>
     </div>
-
-    <div id="mainContent">
+</div>
+ <div id="mainContent">
         <div class="app-logo">YouDiana Smart</div>
         <div class="user-header">
             <span id="txtUserEmail">...</span>
@@ -111,7 +117,7 @@
             <div class="overlay-controls" id="controlsPanel">
                 <button class="btn-overlay" onclick="event.stopPropagation(); playPrevious()">⏮</button>
                 <button class="btn-overlay" onclick="event.stopPropagation(); skipTime(-10)">-10s</button>
-                <button class="btn-overlay" onclick="event.stopPropagation(); togglePlay()"><span id="playIcon"></span></button>
+                <button class="btn-overlay" onclick="event.stopPropagation(); togglePlay()"><span id="playIcon">⏸</span></button>
                 <button class="btn-overlay" onclick="event.stopPropagation(); skipTime(10)">+10s</button>
                 <button class="btn-overlay" onclick="event.stopPropagation(); playNext()">⏭</button>
                 <button class="btn-overlay btn-fs" onclick="toggleFullScreen(event)">⛶</button>
@@ -144,109 +150,263 @@
         <div class="highlights-section"><h4 class="section-title">✨ Adicionados recentemente</h4><div class="scroll-container" id="recentList"></div></div>
         <div class="highlights-section" id="sectionHistory" style="display:none;"><h4 class="section-title">🕒 Continuar assistindo</h4><div class="scroll-container" id="historyList"></div></div>
     </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    onAuthStateChanged, 
+    signOut, 
+    sendEmailVerification,
+    sendPasswordResetEmail 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, onValue, update, increment, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { 
+    getDatabase, 
+    ref, 
+    onValue, 
+    set, 
+    push, 
+    update, 
+    increment 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBc-qchU3a3Z2Jr1ijPolIT7PNHZz86G_I", authDomain: "youvideo-22f8a.firebaseapp.com", databaseURL: "https://youvideo-22f8a-default-rtdb.firebaseio.com", projectId: "youvideo-22f8a", storageBucket: "youvideo-22f8a.firebasestorage.app", messagingSenderId: "179003131728", appId: "1:179003131728:web:03874cc5df997f6c724e55" };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        
-        let biblioteca = [];
-        let currentIndex = -1;
-        let userAtual = null;
-        let historico = JSON.parse(localStorage.getItem('user_history') || "[]");
-        let controlTimer;
+const firebaseConfig = {
+    apiKey: "AIzaSyBc-qchU3a3Z2Jr1ijPolIT7PNHZz86G_I",
+    authDomain: "youvideo-22f8a.firebaseapp.com",
+    databaseURL: "https://youvideo-22f8a-default-rtdb.firebaseio.com",
+    projectId: "youvideo-22f8a",
+    storageBucket: "youvideo-22f8a.firebasestorage.app",
+    messagingSenderId: "179003131728",
+    appId: "1:179003131728:web:03874cc5df997f6c724e55"
+};
 
-        // AUTH
-        window.addEventListener('load', () => { setTimeout(() => { document.getElementById('splashScreen').style.opacity = '0'; setTimeout(() => document.getElementById('splashScreen').style.visibility = 'hidden', 800); }, 3000); });
-        window.alternarModo = () => { const t = document.getElementById('authTitle'); const isL = t.innerText.includes("Login"); t.innerText = isL ? "Criar Conta" : "YouDiana Login"; document.getElementById('btnAuthAction').innerText = isL ? "Cadastrar" : "Acessar"; document.getElementById('btnSwitchLabel').innerText = isL ? "Já tenho conta" : "Criar nova conta"; };
-        window.executarAuth = () => { const e = document.getElementById('emailUser').value, p = document.getElementById('passUser').value; const isL = document.getElementById('authTitle').innerText.includes("Login"); if(isL) signInWithEmailAndPassword(auth, e, p).catch(() => alert("Erro no login.")); else createUserWithEmailAndPassword(auth, e, p).then(u => { sendEmailVerification(u.user).then(() => { alert("Verifique seu e-mail!"); signOut(auth); alternarModo(); }); }).catch(() => alert("Erro no cadastro.")); };
-        window.fazerLogout = () => signOut(auth).then(() => location.reload());
-        onAuthStateChanged(auth, (u) => { if (u && u.emailVerified) { userAtual = u; document.getElementById('authScreen').style.display = 'none'; document.getElementById('mainContent').style.display = 'flex'; document.getElementById('txtUserEmail').innerText = u.email; conectarBanco(); } else { document.getElementById('authScreen').style.display = 'flex'; document.getElementById('mainContent').style.display = 'none'; } });
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
-        // INTERFACE
-        window.mostrarControles = () => {
-            const panel = document.getElementById('controlsPanel');
-            panel.classList.add('active');
-            clearTimeout(controlTimer);
-            controlTimer = setTimeout(() => { panel.classList.remove('active'); }, 2500);
-        };
+// VARIÁVEIS DE ESTADO
+let biblioteca = [];
+let currentIndex = -1;
+let controlTimer;
+let userAtual = null;
+let historico = JSON.parse(localStorage.getItem('user_history')) || [];
 
-        window.togglePlay = () => {
-            const vp = document.getElementById('videoPlayer');
-            const icon = document.getElementById('playIcon');
-            if(vp.paused) { vp.play(); icon.innerText = "⏸"; }
-            else { vp.pause(); icon.innerText = "▶"; }
-            mostrarControles();
-        };
+// --- AUTENTICAÇÃO ---
 
-        // TELA CHEIA FUNCIONAL
-        window.toggleFullScreen = (e) => {
-            if(e) e.stopPropagation();
-            const vp = document.getElementById('videoPlayer');
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (vp.requestFullscreen) vp.requestFullscreen();
-                else if (vp.webkitRequestFullscreen) vp.webkitRequestFullscreen();
-            } else {
-                if (document.exitFullscreen) document.exitFullscreen();
-                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-            }
-        };
+window.alternarModo = () => {
+    const t = document.getElementById('authTitle');
+    const isLogin = t.innerText.includes("Login");
+    t.innerText = isLogin ? "Criar Conta" : "YouDiana Login";
+    document.getElementById('btnAuthAction').innerText = isLogin ? "Cadastrar" : "Acessar";
+    document.getElementById('btnSwitchLabel').innerText = isLogin ? "Já tenho conta" : "Criar nova conta";
+};
 
-        // BANCO
-        function conectarBanco() {
-            onValue(ref(db, 'videos'), (snap) => {
-                const data = snap.val();
-                if(data) {
-                    biblioteca = Object.keys(data).map(k => ({ id_firebase: k, ...data[k] }));
-                    if(currentIndex === -1) carregarVideo(biblioteca.length - 1);
-                    renderRecent(); renderHistory();
-                }
-            });
+window.executarAuth = () => {
+    const email = document.getElementById('emailUser').value;
+    const senha = document.getElementById('passUser').value;
+    const isLogin = document.getElementById('authTitle').innerText.includes("Login");
+
+    if (isLogin) {
+        signInWithEmailAndPassword(auth, email, senha).catch(err => alert("Erro: " + err.message));
+    } else {
+        createUserWithEmailAndPassword(auth, email, senha)
+            .then(res => {
+                sendEmailVerification(res.user);
+                alert("Verifique seu e-mail para ativar a conta!");
+                signOut(auth);
+                alternarModo();
+            })
+            .catch(err => alert("Erro no cadastro: " + err.message));
+    }
+};
+
+window.recuperarSenha = () => {
+    const email = document.getElementById('emailUser').value;
+    if (!email) return alert("Digite seu e-mail.");
+    sendPasswordResetEmail(auth, email)
+        .then(() => alert("E-mail de recuperação enviado!"))
+        .catch(err => alert("Erro: " + err.message));
+};
+
+window.fazerLogout = () => signOut(auth);
+
+onAuthStateChanged(auth, (user) => {
+    if (user && user.emailVerified) {
+        userAtual = user;
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'flex';
+        document.getElementById('txtUserEmail').innerText = user.email;
+        conectarBanco();
+    } else {
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('mainContent').style.display = 'none';
+    }
+});
+
+// --- PLAYER E INTERFACE ---
+
+window.mostrarControles = () => {
+    const panel = document.getElementById('controlsPanel');
+    panel.classList.add('active');
+    clearTimeout(controlTimer);
+    controlTimer = setTimeout(() => { panel.classList.remove('active'); }, 2500);
+};
+
+window.togglePlay = () => {
+    const vp = document.getElementById('videoPlayer');
+    const icon = document.getElementById('playIcon');
+    if(vp.paused) { vp.play(); icon.innerText = "⏸"; }
+    else { vp.pause(); icon.innerText = "▶"; }
+    mostrarControles();
+};
+
+window.toggleFullScreen = (e) => {
+    if(e) e.stopPropagation();
+    const vp = document.getElementById('videoPlayer');
+    if (!document.fullscreenElement) {
+        vp.requestFullscreen?.() || vp.webkitRequestFullscreen?.();
+    } else {
+        document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+    }
+};
+
+// --- LOGICA DE DADOS ---
+
+function conectarBanco() {
+    onValue(ref(db, 'videos'), (snap) => {
+        const data = snap.val();
+        if(data) {
+            biblioteca = Object.keys(data).map(k => ({ id_firebase: k, ...data[k] }));
+            if(currentIndex === -1) carregarVideo(biblioteca.length - 1);
+            renderRecent(); 
+            renderHistory();
         }
+    });
+}
 
-        window.carregarVideo = (idx) => {
-            if(idx < 0 || idx >= biblioteca.length) return;
-            currentIndex = idx;
-            const v = biblioteca[idx];
-            const vp = document.getElementById('videoPlayer');
-            vp.src = v.arquivo;
-            vp.play();
-            document.getElementById('playIcon').innerText = "⏸";
-            document.getElementById('playingNow').innerText = v.titulo;
-            document.getElementById('videoDesc').innerText = v.descricao || "Sem descrição.";
-            document.getElementById('likeCount').innerText = v.curtidas || 0;
-            document.getElementById('shareCount').innerText = v.compartilhamentos || 0;
-            
-            historico = historico.filter(i => i.id_firebase !== v.id_firebase);
-            historico.unshift(v);
-            if(historico.length > 15) historico.pop();
-            localStorage.setItem('user_history', JSON.stringify(historico));
-            renderHistory(); carregarComentarios(v.id_firebase);
-        };
+window.carregarVideo = (idx) => {
+    if(idx < 0 || idx >= biblioteca.length) return;
+    currentIndex = idx;
+    const v = biblioteca[idx];
+    const vp = document.getElementById('videoPlayer');
+    
+    vp.src = v.arquivo;
+    vp.play();
+    
+    document.getElementById('playIcon').innerText = "⏸";
+    document.getElementById('playingNow').innerText = v.titulo;
+    document.getElementById('videoDesc').innerText = v.descricao || "Sem descrição.";
+    document.getElementById('likeCount').innerText = v.curtidas || 0;
+    document.getElementById('shareCount').innerText = v.compartilhamentos || 0;
+    
+    // Atualiza histórico
+    historico = historico.filter(i => i.id_firebase !== v.id_firebase);
+    historico.unshift(v);
+    if(historico.length > 15) historico.pop();
+    localStorage.setItem('user_history', JSON.stringify(historico));
+    
+    renderHistory(); 
+    carregarComentarios(v.id_firebase);
+};
 
-        function renderRecent() { const list = [...biblioteca].reverse().slice(0, 15); document.getElementById('recentList').innerHTML = list.map(v => `<div class="video-card" onclick="carregarVideo(${biblioteca.indexOf(v)})"><div class="thumb-wrapper"><video class="thumb-video" muted><source src="${v.arquivo}"></video></div><div class="card-info"><b>${v.titulo}</b></div></div>`).join(''); }
-        function renderHistory() { const sec = document.getElementById('sectionHistory'); if(historico.length === 0) { sec.style.display = 'none'; return; } sec.style.display = 'block'; document.getElementById('historyList').innerHTML = historico.map(v => `<div class="video-card" onclick="reproduzirDoHistorico('${v.id_firebase}')"><div class="thumb-wrapper"><video class="thumb-video" muted><source src="${v.arquivo}"></video></div><div class="card-info"><b>${v.titulo}</b></div></div>`).join(''); }
-        window.reproduzirDoHistorico = (id) => { const idx = biblioteca.findIndex(v => v.id_firebase === id); if(idx !== -1) carregarVideo(idx); };
-        window.toggleComments = () => { const b = document.getElementById('commentsBody'), a = document.getElementById('commentArrow'); const open = b.style.display === 'block'; b.style.display = open ? 'none' : 'block'; a.innerText = open ? '▼' : '▲'; };
-        window.registrarCurtida = () => update(ref(db, `videos/${biblioteca[currentIndex].id_firebase}`), { curtidas: increment(1) });
-        window.registrarCompartilhamento = () => { const v = biblioteca[currentIndex]; if (navigator.share) { navigator.share({ title: v.titulo, url: window.location.href }).then(() => { update(ref(db, `videos/${v.id_firebase}`), { compartilhamentos: increment(1) }); }); } else { navigator.clipboard.writeText(window.location.href); alert("Link copiado!"); update(ref(db, `videos/${v.id_firebase}`), { compartilhamentos: increment(1) }); } };
-        window.searchVideos = () => { const t = document.getElementById('searchInput').value.toLowerCase(), l = document.getElementById('resultsList'); if(!t) { l.style.display = 'none'; return; } const f = biblioteca.filter(v => v.titulo.toLowerCase().includes(t)); l.innerHTML = f.map(v => `<div class="video-item" onclick="carregarVideo(${biblioteca.indexOf(v)})">${v.titulo}</div>`).join(''); l.style.display = f.length ? 'block' : 'none'; };
-        function carregarComentarios(id) { onValue(ref(db, `comentarios/${id}`), (s) => { const data = s.val(); document.getElementById('commentCount').innerText = data ? Object.keys(data).length : 0; document.getElementById('commentList').innerHTML = data ? Object.values(data).reverse().map(c => `<div class="comment-item"><span class="comment-user">${c.usuario}</span><span>${c.texto}</span></div>`).join('') : "Sem comentários."; }); }
-        window.enviarComentario = () => { const i = document.getElementById('newComment'); if(!i.value.trim()) return; const refC = push(ref(db, `comentarios/${biblioteca[currentIndex].id_firebase}`)); set(refC, { usuario: userAtual.email.split('@')[0], texto: i.value, data: Date.now() }); i.value = ""; };
+function renderRecent() {
+    const list = [...biblioteca].reverse().slice(0, 15);
+    document.getElementById('recentList').innerHTML = list.map(v => `
+        <div class="video-card" onclick="carregarVideo(${biblioteca.indexOf(v)})">
+            <div class="thumb-wrapper">
+                <video class="thumb-video" muted><source src="${v.arquivo}"></video>
+            </div>
+            <div class="card-info"><b>${v.titulo}</b></div>
+        </div>`).join('');
+}
 
-        window.skipTime = (s) => document.getElementById('videoPlayer').currentTime += s;
-        window.playNext = () => carregarVideo((currentIndex + 1) % biblioteca.length);
-        window.playPrevious = () => carregarVideo((currentIndex - 1 + biblioteca.length) % biblioteca.length);
+function renderHistory() {
+    const sec = document.getElementById('sectionHistory');
+    if(historico.length === 0) { sec.style.display = 'none'; return; }
+    sec.style.display = 'block';
+    document.getElementById('historyList').innerHTML = historico.map(v => `
+        <div class="video-card" onclick="reproduzirDoHistorico('${v.id_firebase}')">
+            <div class="thumb-wrapper">
+                <video class="thumb-video" muted><source src="${v.arquivo}"></video>
+            </div>
+            <div class="card-info"><b>${v.titulo}</b></div>
+        </div>`).join('');
+}
 
-        const loader = document.getElementById('videoLoader'), vp = document.getElementById('videoPlayer');
-        vp.onwaiting = () => loader.style.display = 'block';
-        vp.onplaying = () => loader.style.display = 'none';
-        vp.onended = () => playNext();
-    </script>
-</body>
-</html>
+window.reproduzirDoHistorico = (id) => {
+    const idx = biblioteca.findIndex(v => v.id_firebase === id);
+    if(idx !== -1) carregarVideo(idx);
+};
+
+window.toggleComments = () => {
+    const b = document.getElementById('commentsBody');
+    const a = document.getElementById('commentArrow');
+    const isOpen = b.style.display === 'block';
+    b.style.display = isOpen ? 'none' : 'block';
+    a.innerText = isOpen ? '▼' : '▲';
+};
+
+window.registrarCurtida = () => {
+    const id = biblioteca[currentIndex].id_firebase;
+    update(ref(db, `videos/${id}`), { curtidas: increment(1) });
+};
+
+window.registrarCompartilhamento = () => {
+    const v = biblioteca[currentIndex];
+    const url = window.location.href;
+    const shareAction = () => update(ref(db, `videos/${v.id_firebase}`), { compartilhamentos: increment(1) });
+
+    if (navigator.share) {
+        navigator.share({ title: v.titulo, url }).then(shareAction);
+    } else {
+        navigator.clipboard.writeText(url);
+        alert("Link copiado!");
+        shareAction();
+    }
+};
+
+window.searchVideos = () => {
+    const t = document.getElementById('searchInput').value.toLowerCase();
+    const l = document.getElementById('resultsList');
+    if(!t) { l.style.display = 'none'; return; }
+    const f = biblioteca.filter(v => v.titulo.toLowerCase().includes(t));
+    l.innerHTML = f.map(v => `<div class="video-item" onclick="carregarVideo(${biblioteca.indexOf(v)})">${v.titulo}</div>`).join('');
+    l.style.display = f.length ? 'block' : 'none';
+};
+
+function carregarComentarios(id) {
+    onValue(ref(db, `comentarios/${id}`), (s) => {
+        const data = s.val();
+        document.getElementById('commentCount').innerText = data ? Object.keys(data).length : 0;
+        document.getElementById('commentList').innerHTML = data ? 
+            Object.values(data).reverse().map(c => `
+                <div class="comment-item">
+                    <span class="comment-user">${c.usuario}</span>
+                    <span>${c.texto}</span>
+                </div>`).join('') : "Sem comentários.";
+    });
+}
+
+window.enviarComentario = () => {
+    const i = document.getElementById('newComment');
+    if(!i.value.trim() || !userAtual) return;
+    const refC = push(ref(db, `comentarios/${biblioteca[currentIndex].id_firebase}`));
+    set(refC, { 
+        usuario: userAtual.email.split('@')[0], 
+        texto: i.value, 
+        data: Date.now() 
+    });
+    i.value = "";
+};
+
+window.skipTime = (s) => document.getElementById('videoPlayer').currentTime += s;
+window.playNext = () => carregarVideo((currentIndex + 1) % biblioteca.length);
+window.playPrevious = () => carregarVideo((currentIndex - 1 + biblioteca.length) % biblioteca.length);
+
+const loader = document.getElementById('videoLoader'), vp = document.getElementById('videoPlayer');
+vp.onwaiting = () => loader.style.display = 'block';
+vp.onplaying = () => loader.style.display = 'none';
+vp.onended = () => window.playNext();
+</script>
