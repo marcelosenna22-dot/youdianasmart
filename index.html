@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouDiana Smart v5</title>
+    <title>YouDiana Smart v6</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
@@ -20,8 +20,31 @@
             align-items: center; box-sizing: border-box; overflow-x: hidden; 
         }
 
+        /* --- 🆕 SPLASH SCREEN ANIMADO --- */
+        #splashScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 20000; /* Acima de tudo */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s; /* Transição suave ao sumir */
+        }
+        .splash-logo {
+            font-size: 2.5rem; font-weight: 600; color: white;
+            text-shadow: 0 0 20px rgba(255, 71, 87, 0.6); /* Brilho vermelho */
+            animation: pulse 2s infinite; /* Animação de pulsar */
+        }
+        .splash-loader {
+            margin-top: 20px; width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary);
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
         /* --- AUTH --- */
-        #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         .auth-container { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(15px); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; }
         .auth-container input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: none; background: rgba(255,255,255,0.1); color: white; outline: none; box-sizing: border-box; }
         .btn-main { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; background: var(--primary); color: white; }
@@ -59,14 +82,14 @@
         .btn-side { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .btn-side span { font-size: 0.65rem; font-weight: 600; margin-top: 2px; }
 
-        /* --- COMENTÁRIOS --- */
+        /* COMENTÁRIOS */
         .comments-section { margin-top: 10px; background: var(--card); border-radius: 12px; overflow: hidden; }
         .comments-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.9rem; }
         #commentsBody { display: none; padding: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
         .comment-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; }
         .comment-user { color: var(--primary); font-weight: 600; font-size: 0.75rem; display: block; }
 
-        /* --- LISTAS --- */
+        /* LISTAS */
         .section-title { margin: 20px 0 10px 0; font-size: 0.9rem; font-weight: 600; }
         .scroll-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .video-card { flex: 0 0 140px; background: var(--card); border-radius: 10px; overflow: hidden; cursor: pointer; }
@@ -86,6 +109,11 @@
 </head>
 
 <body onclick="fecharPesquisa()">
+
+    <div id="splashScreen">
+        <div class="splash-logo">YouDiana</div>
+        <div class="splash-loader"></div>
+    </div>
 
     <div id="authScreen">
         <div class="auth-container">
@@ -276,17 +304,37 @@
 
     window.fazerLogout = () => signOut(auth);
 
+    // --- 🆕 LÓGICA DO SPLASH SCREEN + FIREBASE ---
+    // Esta função controla o tempo do Splash e a transição para o login
+    function fecharSplash(callback) {
+        const splash = document.getElementById('splashScreen');
+        // Espera pelo menos 2.5 segundos para garantir que o logo foi visto
+        setTimeout(() => {
+            splash.style.opacity = '0';
+            splash.style.visibility = 'hidden';
+            if (callback) callback(); // Executa o próximo passo (mostrar login ou app)
+        }, 2500);
+    }
+
     onAuthStateChanged(auth, (user) => {
+        // Quando o Firebase responder sobre o estado do usuário...
+        
         if (user && user.emailVerified) {
-            userAtual = user;
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'flex';
-            document.getElementById('txtUserEmail').innerText = user.email.split('@')[0];
-            conectarBanco();
+            // Usuário logado: Fecha o splash e mostra o app
+            fecharSplash(() => {
+                userAtual = user;
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'flex';
+                document.getElementById('txtUserEmail').innerText = user.email.split('@')[0];
+                conectarBanco();
+            });
         } else {
-            document.getElementById('authScreen').style.display = 'flex';
-            document.getElementById('mainContent').style.display = 'none';
-            if(user) signOut(auth);
+            // Usuário deslogado: Fecha o splash e mostra o login
+            fecharSplash(() => {
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'none';
+                if(user) signOut(auth); // Garante deslogar se não verificado
+            });
         }
     });
 
