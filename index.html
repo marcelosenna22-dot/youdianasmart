@@ -42,8 +42,8 @@
         .search-container { position: relative; width: 100%; margin-bottom: 20px; }
         #searchInput { width: 100%; padding: 12px 20px 12px 45px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card); color: white; box-sizing: border-box; outline: none; }
         .search-icon-fixed { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
-        .results-list { position: absolute; top: 45px; width: 100%; background: black; opacity: 1; border-radius: 15px; z-index: 100; display: flex; max-height: 200px; overflow-y: auto; }
-        .video-item { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .results-list { position: absolute; top: 45px; width: 100%; background: black; opacity: 1; border-radius: 15px; z-index: 100; display: flex; flex-direction: column; max-height: 200px; overflow-y: auto; }
+        .video-item { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; color: white; }
 
         /* PLAYER */
         .player-container { width: 100%; background: #000; border-radius: 15px; overflow: hidden; position: relative; max-height: 75vh; display: flex; justify-content: center; align-items: center; }
@@ -98,7 +98,7 @@
         
         <div class="user-header">
             <span id="txtUserEmail">...</span>
-            <button onclick="fazerLogout()" style="background:#000; border-radius:40px; color:#ffffff; padding: 0 15px; cursor:pointer;">Sair</button>
+            <button onclick="fazerLogout()" style="background:#000; border-radius:40px; color:#ffffff; padding: 5px 15px; cursor:pointer; border:1px solid #333;">Sair</button>
         </div>
 
         <div class="search-container" onclick="event.stopPropagation()">
@@ -120,6 +120,9 @@
 
         <div class="video-details" style="margin-top:12px; background:var(--card); padding:15px; border-radius:15px;">
             <h3 id="playingNow" style="margin:0; font-size: 1.05rem;">Iniciando...</h3>
+            
+            <p id="videoDesc" style="font-size: 0.85rem; color: #bbb; margin-top: 8px; line-height: 1.4;"></p>
+
             <div style="display:flex; gap:25px; margin-top:12px;">
                 <button onclick="registrarCurtida()" style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center; gap:5px;">❤️ <span id="likeCount">0</span></button>
                 <button onclick="registrarCompartilhamento()" style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center; gap:5px;">↪ <span id="shareCount">0</span></button>
@@ -135,7 +138,6 @@
                 <div class="comment-input-group">
                     <input type="text" id="newComment" placeholder="Comentar...">
                     <button class="btn-main" style="width: auto; padding: 0 15px; background:#000;" onclick="enviarComentario()">Postar</button>
-					
                 </div>
                 <div class="comment-list" id="commentList"></div>
             </div>
@@ -236,8 +238,14 @@
             if(idx < 0 || idx >= biblioteca.length) return;
             currentIndex = idx;
             const v = biblioteca[idx];
+            
+            // CARREGA VÍDEO E TEXTOS
             document.getElementById('videoPlayer').src = v.arquivo;
             document.getElementById('playingNow').innerText = v.titulo;
+            
+            // ATUALIZA A DESCRIÇÃO (CORREÇÃO AQUI)
+            document.getElementById('videoDesc').innerText = v.descricao || "Sem descrição disponível.";
+            
             document.getElementById('likeCount').innerText = v.curtidas || 0;
             document.getElementById('shareCount').innerText = v.compartilhamentos || 0;
             
